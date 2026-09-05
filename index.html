@@ -1,0 +1,1977 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AXIOM LAB OPS — Online</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  color:#182234;
+  background:#07152e;
+  overflow-x:hidden
+}
+
+/* ================= OCEAN BACKGROUND ================= */
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:-10;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 20%,#173e72 0,transparent 35%),
+    radial-gradient(circle at 80% 70%,#321b62 0,transparent 35%),
+    linear-gradient(145deg,#06152d,#082b4d,#101c4b);
+}
+
+.bg:before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background:
+    radial-gradient(circle at 20% 35%,#39bde833,transparent 20%),
+    radial-gradient(circle at 75% 55%,#a66cff33,transparent 22%),
+    radial-gradient(circle at 50% 5%,#36d9ff22,transparent 18%);
+  filter:blur(25px);
+  animation:oceanGlow 12s ease-in-out infinite alternate
+}
+
+@keyframes oceanGlow{
+  from{transform:translate(-2%,-2%) scale(1)}
+  to{transform:translate(4%,3%) scale(1.1)}
+}
+
+/* bubbles */
+
+.bubbles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:-8
+}
+
+.bubble{
+  position:absolute;
+  bottom:-80px;
+  width:10px;
+  height:10px;
+  border:1px solid #ffffff55;
+  border-radius:50%;
+  background:#ffffff12;
+  animation:rise linear infinite
+}
+
+@keyframes rise{
+  0%{transform:translateY(0) scale(.7);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.5}
+  100%{transform:translateY(-115vh) scale(1.3);opacity:0}
+}
+
+/* jellyfish */
+
+.jelly{
+  position:absolute;
+  width:75px;
+  height:65px;
+  border-radius:50% 50% 42% 42%;
+  background:radial-gradient(circle at 35% 25%,#ffffffaa,#79c8ff66 35%,#8b5cf644 75%);
+  box-shadow:
+    0 0 25px #63c9ff88,
+    0 0 60px #9d6cff44;
+  animation:floatJelly 9s ease-in-out infinite;
+  opacity:.75
+}
+
+.jelly:before{
+  content:"";
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:-42px;
+  height:50px;
+  background:
+    linear-gradient(90deg,
+      transparent 0 8%,
+      #76d9ff88 9% 12%,
+      transparent 13% 28%,
+      #b47cff77 29% 33%,
+      transparent 34% 50%,
+      #72dfff77 51% 55%,
+      transparent 56% 72%,
+      #a878ff66 73% 77%,
+      transparent 78%);
+  border-radius:50%;
+  filter:blur(1px)
+}
+
+@keyframes floatJelly{
+  0%,100%{transform:translateY(0) translateX(0) rotate(-3deg)}
+  50%{transform:translateY(-35px) translateX(25px) rotate(4deg)}
+}
+
+.j1{left:8%;top:18%;animation-delay:-2s;transform:scale(.8)}
+.j2{right:12%;top:30%;animation-delay:-5s;transform:scale(1.15)}
+.j3{left:42%;top:68%;animation-delay:-7s;transform:scale(.65)}
+.j4{right:35%;top:8%;animation-delay:-4s;transform:scale(.55)}
+
+/* ================= LANDING ================= */
+
+.landing{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+  position:relative
+}
+
+.landingCard{
+  width:min(850px,100%);
+  padding:65px 45px;
+  text-align:center;
+  border:1px solid #ffffff2b;
+  border-radius:32px;
+  background:#071a35aa;
+  backdrop-filter:blur(22px);
+  box-shadow:
+    0 30px 100px #00000066,
+    inset 0 1px #ffffff18
+}
+
+.landingLogo{
+  width:76px;
+  height:76px;
+  margin:auto;
+  border-radius:24px;
+  background:conic-gradient(#48d7ff,#8a6cff,#40e0c0,#48d7ff);
+  box-shadow:0 0 50px #57cfff66;
+  position:relative
+}
+
+.landingLogo:after{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border:3px solid white;
+  border-radius:13px;
+  transform:rotate(45deg)
+}
+
+.landing h1{
+  color:white;
+  font-size:clamp(42px,7vw,78px);
+  margin:25px 0 12px;
+  letter-spacing:-4px
+}
+
+.landing p{
+  color:#b7c8e2;
+  max-width:600px;
+  margin:0 auto 30px;
+  line-height:1.7
+}
+
+.enterBtn{
+  border:0;
+  padding:15px 25px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#4f8cff,#8b63e8);
+  color:white;
+  font-weight:900;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:0 15px 35px #4f8cff44;
+  transition:.2s
+}
+
+.enterBtn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 20px 45px #4f8cff66
+}
+
+/* ================= APP ================= */
+
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:245px 1fr
+}
+
+.side{
+  padding:20px 14px;
+  background:#07182dcc;
+  backdrop-filter:blur(22px);
+  border-right:1px solid #ffffff18;
+  position:sticky;
+  top:0;
+  height:100vh
+}
+
+.brand{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin:0 8px 28px;
+  color:white
+}
+
+.mark{
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  background:conic-gradient(#4e77ef,#29bcae,#8b67dd,#4e77ef);
+  position:relative;
+  box-shadow:0 10px 30px #5879db40
+}
+
+.mark:after{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border:2px solid white;
+  border-radius:9px;
+  transform:rotate(45deg)
+}
+
+.brand b{font-size:14px}
+.brand small{
+  display:block;
+  color:#8298b7;
+  font-size:9px;
+  letter-spacing:1.5px;
+  margin-top:2px
+}
+
+.nav{
+  display:grid;
+  gap:5px
+}
+
+.nav button{
+  border:0;
+  background:transparent;
+  padding:12px;
+  border-radius:12px;
+  text-align:left;
+  color:#9aacc6;
+  font-weight:750;
+  cursor:pointer;
+  transition:.2s
+}
+
+.nav button:hover{
+  background:#ffffff0d;
+  color:#7db4ff;
+  transform:translateX(3px)
+}
+
+.nav button.on{
+  background:#315ea633;
+  color:#7db4ff;
+  box-shadow:inset 3px #4b9eff
+}
+
+main{
+  max-width:1450px;
+  width:100%;
+  margin:auto;
+  padding:25px 32px
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px
+}
+
+.crumb{
+  color:#9badc5;
+  font-size:13px
+}
+
+.user{
+  background:#ffffff12;
+  color:white;
+  border:1px solid #ffffff18;
+  padding:9px 12px;
+  border-radius:11px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.hero,.panel{
+  background:#ffffffee;
+  backdrop-filter:blur(18px);
+  border:1px solid #ffffffaa;
+  border-radius:25px;
+  box-shadow:0 20px 70px #00000025
+}
+
+.hero{
+  padding:40px;
+  position:relative;
+  overflow:hidden
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border:1px solid #567ce733;
+  border-radius:50%;
+  right:-100px;
+  top:-100px;
+  box-shadow:
+    0 0 0 30px #567ce70a,
+    0 0 0 65px #567ce705;
+  animation:spin 18s linear infinite
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.tag{
+  display:inline-block;
+  background:#edf3ff;
+  color:#4164ba;
+  border-radius:99px;
+  padding:7px 10px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1px
+}
+
+.hero h1{
+  font-size:clamp(36px,5vw,62px);
+  line-height:1.03;
+  letter-spacing:-2.8px;
+  margin:15px 0 12px
+}
+
+.muted{
+  color:#708097;
+  line-height:1.6
+}
+
+.chips{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:20px
+}
+
+.chip{
+  padding:7px 10px;
+  border-radius:99px;
+  background:#f0f3f7;
+  color:#5c687a;
+  font-size:11px;
+  font-weight:800
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-top:15px
+}
+
+.card{
+  padding:18px;
+  border:1px solid #e0e6ef;
+  background:#ffffffd9;
+  border-radius:18px
+}
+
+.card b.big{font-size:29px}
+
+.card small{
+  display:block;
+  color:#748095;
+  margin-top:5px
+}
+
+.panel{
+  padding:24px;
+  min-height:70vh
+}
+
+.panel h2{
+  margin:0;
+  font-size:28px
+}
+
+.tools{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin:18px 0;
+  flex-wrap:wrap
+}
+
+.btn{
+  border:1px solid #dfe5ed;
+  background:#fff;
+  padding:10px 13px;
+  border-radius:11px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.18s
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px #243c600f
+}
+
+.primary{
+  border:0;
+  background:#3f6fe8;
+  color:white;
+  box-shadow:0 8px 20px #3f6fe838
+}
+
+.danger{color:#bd4451}
+
+.table{
+  overflow:auto;
+  border:1px solid #e1e7ef;
+  border-radius:16px;
+  background:#fff
+}
+
+.table table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:680px
+}
+
+.table th,.table td{
+  padding:13px;
+  border-bottom:1px solid #edf0f4;
+  text-align:left;
+  font-size:13px
+}
+
+.table th{
+  font-size:10px;
+  color:#778397;
+  text-transform:uppercase;
+  letter-spacing:.8px
+}
+
+.empty{
+  text-align:center;
+  padding:60px 20px;
+  color:#738096
+}
+
+.pill{
+  padding:5px 8px;
+  border-radius:99px;
+  background:#edf3ff;
+  color:#4265b7;
+  font-size:10px;
+  font-weight:800
+}
+
+.pill.green{
+  background:#e8f7ef;
+  color:#167b53
+}
+
+.pill.red{
+  background:#ffedef;
+  color:#b84250
+}
+
+/* ================= CHAT ================= */
+
+.chat{
+  display:flex;
+  flex-direction:column;
+  height:60vh
+}
+
+.msgs{
+  flex:1;
+  overflow:auto;
+  padding:8px;
+  scroll-behavior:smooth
+}
+
+.msg{
+  max-width:78%;
+  padding:11px 13px;
+  border-radius:14px;
+  margin:8px 0;
+  font-size:13px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+
+.bot{
+  background:#eef2f7;
+  color:#182234
+}
+
+.me{
+  margin-left:auto;
+  background:#eaf1ff;
+  color:#2d57ae
+}
+
+.thinking{
+  opacity:.7;
+  font-style:italic
+}
+
+.chatbar{
+  display:flex;
+  gap:8px;
+  margin-top:8px
+}
+
+.chatbar input{
+  flex:1;
+  border:1px solid #dce3ed;
+  border-radius:11px;
+  padding:12px;
+  outline:0
+}
+
+.chatbar input:focus{
+  border-color:#7898ea
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#152238aa;
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:10
+}
+
+.modal.show{display:flex}
+
+.dialog{
+  background:white;
+  border-radius:21px;
+  padding:23px;
+  width:min(620px,100%);
+  max-height:90vh;
+  overflow:auto
+}
+
+.dialog h3{
+  margin:0 0 14px;
+  font-size:21px
+}
+
+label{
+  display:block;
+  font-size:11px;
+  font-weight:800;
+  color:#6e7a8e;
+  margin:11px 0 5px
+}
+
+input,select,textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #dce3ec;
+  border-radius:10px
+}
+
+textarea{
+  min-height:90px
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:17px
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#172238;
+  color:#fff;
+  padding:12px 14px;
+  border-radius:11px;
+  transform:translateY(20px);
+  opacity:0;
+  transition:.25s;
+  z-index:30
+}
+
+.toast.show{
+  opacity:1;
+  transform:none
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:850px){
+  .app{grid-template-columns:1fr}
+  .side{
+    height:auto;
+    position:relative;
+    border-right:0;
+    border-bottom:1px solid #ffffff18
+  }
+  .grid{grid-template-columns:repeat(2,1fr)}
+  main{padding:18px}
+}
+
+@media(max-width:550px){
+  .grid{grid-template-columns:1fr}
+  .hero{padding:27px}
+  .landingCard{padding:45px 25px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+  <div class="jelly j1"></div>
+  <div class="jelly j2"></div>
+  <div class="jelly j3"></div>
+  <div class="jelly j4"></div>
+</div>
+
+<div class="bubbles">
+  <div class="bubble" style="left:8%;animation-duration:12s"></div>
+  <div class="bubble" style="left:17%;animation-duration:16s;animation-delay:2s"></div>
+  <div class="bubble" style="left:29%;animation-duration:10s;animation-delay:4s"></div>
+  <div class="bubble" style="left:44%;animation-duration:18s;animation-delay:1s"></div>
+  <div class="bubble" style="left:61%;animation-duration:13s;animation-delay:3s"></div>
+  <div class="bubble" style="left:76%;animation-duration:17s;animation-delay:5s"></div>
+  <div class="bubble" style="left:91%;animation-duration:11s;animation-delay:2s"></div>
+</div>
+
+<div id="root"></div>
+
+<div class="modal" id="modal">
+  <div class="dialog" id="dialog"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const pages=[
+  ["overview","Overview"],
+  ["resources","Resources"],
+  ["workflows","Workflows"],
+  ["upgrades","Upgrades"],
+  ["crisis","Crisis Center"],
+  ["ai","AI Advisor"]
+];
+
+let S=JSON.parse(localStorage.getItem("axiom_online")||"null")||{
+  name:"",
+  lab:"",
+  resources:[],
+  workflows:[],
+  upgrades:[],
+  crises:[],
+  crisisEnabled:false,
+  chat:[]
+};
+
+let page="overview";
+
+const esc=x=>String(x??"").replace(
+  /[&<>"']/g,
+  c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c])
+);
+
+function save(){
+  localStorage.setItem("axiom_online",JSON.stringify(S));
+}
+
+function $(x){
+  return document.getElementById(x);
+}
+
+function toast(x){
+  $("toast").textContent=x;
+  $("toast").classList.add("show");
+  setTimeout(
+    ()=>$("toast").classList.remove("show"),
+    1600
+  );
+}
+
+/* ================= LANDING ================= */
+
+function landing(){
+
+  $("root").innerHTML=`
+
+    <div class="landing">
+
+      <div class="landingCard">
+
+        <div class="landingLogo"></div>
+
+        <h1>AXIOM</h1>
+
+        <p>
+          Lab Operations Intelligence Platform.
+          Manage your resources, workflows, upgrades,
+          crises and AI-assisted lab operations
+          in one workspace.
+        </p>
+
+        <button class="enterBtn" onclick="enterLab()">
+          Enter Lab →
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+function enterLab(){
+
+  if(S.name && S.lab){
+    drawApp();
+  }else{
+    settings(true);
+  }
+
+}
+
+/* ================= APP ================= */
+
+function drawApp(){
+
+  $("root").innerHTML=`
+
+    <div class="app">
+
+      <aside class="side">
+
+        <div class="brand">
+
+          <div class="mark"></div>
+
+          <div>
+            <b>AXIOM LAB OPS</b>
+            <small>ONLINE LAB SIMULATOR</small>
+          </div>
+
+        </div>
+
+        <div class="nav" id="nav"></div>
+
+      </aside>
+
+      <main>
+
+        <div class="top">
+
+          <span class="crumb" id="crumb"></span>
+
+          <button class="user" onclick="settings()">
+            ⚙ <span id="user"></span>
+          </button>
+
+        </div>
+
+        <div id="app"></div>
+
+      </main>
+
+    </div>
+
+  `;
+
+  nav();
+  go(page);
+
+}
+
+/* ================= NAV ================= */
+
+function nav(){
+
+  $("nav").innerHTML=pages.map(
+    p=>`
+      <button
+        class="${page==p[0]?'on':''}"
+        onclick="go('${p[0]}')">
+        ${p[1]}
+      </button>
+    `
+  ).join("");
+
+}
+
+function go(p){
+
+  page=p;
+
+  nav();
+
+  $("crumb").textContent=
+    "Workspace / "+
+    pages.find(x=>x[0]==p)[1];
+
+  draw();
+
+}
+
+/* ================= DRAW ================= */
+
+function draw(){
+
+  $("user").textContent=S.name;
+
+  $("app").innerHTML=
+    ({
+      overview,
+      resources,
+      workflows,
+      upgrades,
+      crisis,
+      ai
+    })[page]();
+
+}
+
+/* ================= SETTINGS ================= */
+
+function settings(first=false){
+
+  modal(
+    first ? "Create your lab" : "Workspace settings",
+
+    `
+      <label>Your name</label>
+
+      <input
+        id="n"
+        value="${esc(S.name)}"
+        placeholder="Your name">
+
+      <label>Lab name</label>
+
+      <input
+        id="l"
+        value="${esc(S.lab)}"
+        placeholder="e.g. Materials Lab">
+
+      <label>Is there a crisis right now?</label>
+
+      <select id="ce">
+
+        <option value="false"
+          ${!S.crisisEnabled?"selected":""}>
+          No
+        </option>
+
+        <option value="true"
+          ${S.crisisEnabled?"selected":""}>
+          Yes
+        </option>
+
+      </select>
+
+      <div class="actions">
+
+        <button class="btn"
+          onclick="closeM()">
+          Cancel
+        </button>
+
+        <button class="btn primary"
+          onclick="saveSettings()">
+          Save
+        </button>
+
+      </div>
+    `
+  );
+
+}
+
+function saveSettings(){
+
+  if(!n.value.trim()||!l.value.trim()){
+    toast("Name and lab are required");
+    return;
+  }
+
+  S.name=n.value.trim();
+  S.lab=l.value.trim();
+  S.crisisEnabled=ce.value==="true";
+
+  save();
+  closeM();
+  drawApp();
+
+  toast("Workspace saved");
+}
+
+/* ================= OVERVIEW ================= */
+
+function overview(){
+
+  return `
+
+    <div class="hero">
+
+      <span class="tag">
+        LIVE WORKSPACE
+      </span>
+
+      <h1>${esc(S.lab)}</h1>
+
+      <p class="muted">
+        Welcome, ${esc(S.name)}.
+        AXIOM uses your actual entries instead
+        of inventing simulation data.
+      </p>
+
+      <div class="chips">
+
+        <span class="chip">
+          ${S.resources.length} resources
+        </span>
+
+        <span class="chip">
+          ${S.workflows.length} workflows
+        </span>
+
+        <span class="chip">
+          ${S.upgrades.filter(x=>x.unlocked).length}
+          upgrades active
+        </span>
+
+        <span class="chip">
+          ${S.crisisEnabled
+            ?S.crises.length+" crises"
+            :"Crisis mode off"}
+        </span>
+
+      </div>
+
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <b class="big">${S.resources.length}</b>
+        <small>Resources</small>
+      </div>
+
+      <div class="card">
+        <b class="big">${S.workflows.length}</b>
+        <small>Workflows</small>
+      </div>
+
+      <div class="card">
+        <b class="big">
+          ${S.upgrades.filter(x=>x.unlocked).length}
+        </b>
+        <small>Active upgrades</small>
+      </div>
+
+      <div class="card">
+        <b class="big">
+          ${S.crisisEnabled?S.crises.length:"—"}
+        </b>
+        <small>Crisis records</small>
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+/* ================= WRAP ================= */
+
+function wrap(title,desc,body,button,cls="panel"){
+
+  return `
+
+    <div class="${cls}">
+
+      <h2>${title}</h2>
+
+      <p class="muted">${desc}</p>
+
+      <div class="tools">
+        <span></span>
+        ${button||""}
+      </div>
+
+      ${body}
+
+    </div>
+
+  `;
+
+}
+
+/* ================= RESOURCES ================= */
+
+function resources(){
+
+  let body=S.resources.length?
+
+  `
+  <div class="table">
+
+    <table>
+
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Qty</th>
+        <th>Unit</th>
+        <th></th>
+      </tr>
+
+      ${S.resources.map((x,i)=>`
+
+        <tr>
+
+          <td><b>${esc(x.name)}</b></td>
+          <td>${esc(x.type)}</td>
+          <td>${x.qty}</td>
+          <td>${esc(x.unit)}</td>
+
+          <td>
+
+            <button class="btn"
+              onclick="rf(${i})">
+              Edit
+            </button>
+
+            <button class="btn danger"
+              onclick="rd(${i})">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")}
+
+    </table>
+
+  </div>
+  `
+
+  :
+
+  `
+  <div class="empty">
+    No resources yet.
+    Add what your lab actually has.
+  </div>
+  `;
+
+  return wrap(
+    "Resources",
+    "Edit your real equipment, consumables, personnel and spaces.",
+    body,
+    `<button class="btn primary" onclick="rf()">
+      ＋ Add resource
+    </button>`
+  );
+
+}
+
+function rf(i=null){
+
+  let x=i==null
+    ?{name:"",type:"Equipment",qty:1,unit:"units"}
+    :S.resources[i];
+
+  modal(
+    i==null?"Add resource":"Edit resource",
+
+    `
+      <label>Name</label>
+      <input id="rn" value="${esc(x.name)}">
+
+      <label>Type</label>
+
+      <select id="rt">
+
+        ${[
+          "Equipment",
+          "Consumable",
+          "Personnel",
+          "Space",
+          "Other"
+        ].map(v=>`
+          <option ${v==x.type?"selected":""}>
+            ${v}
+          </option>
+        `).join("")}
+
+      </select>
+
+      <label>Quantity</label>
+      <input id="rq" type="number"
+        min="0" value="${x.qty}">
+
+      <label>Unit</label>
+      <input id="ru" value="${esc(x.unit)}">
+
+      <div class="actions">
+
+        <button class="btn"
+          onclick="closeM()">
+          Cancel
+        </button>
+
+        <button class="btn primary"
+          onclick="rs(${i??-1})">
+          Save
+        </button>
+
+      </div>
+    `
+  );
+
+}
+
+function rs(i){
+
+  let x={
+    name:rn.value.trim(),
+    type:rt.value,
+    qty:Number(rq.value),
+    unit:ru.value.trim()||"units"
+  };
+
+  if(!x.name){
+    toast("Name required");
+    return;
+  }
+
+  i<0?S.resources.push(x):S.resources[i]=x;
+
+  save();
+  closeM();
+  draw();
+
+  toast("Resource saved");
+}
+
+function rd(i){
+
+  if(confirm("Delete resource?")){
+    S.resources.splice(i,1);
+    save();
+    draw();
+  }
+
+}
+
+/* ================= WORKFLOWS ================= */
+
+function workflows(){
+
+  let body=S.workflows.length?
+
+  `
+  <div class="table">
+
+    <table>
+
+      <tr>
+        <th>Workflow</th>
+        <th>Goal</th>
+        <th>Priority</th>
+        <th>Owner</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+
+      ${S.workflows.map((x,i)=>`
+
+        <tr>
+
+          <td><b>${esc(x.name)}</b></td>
+          <td>${esc(x.goal)}</td>
+          <td>${x.priority}</td>
+          <td>${esc(x.owner)}</td>
+
+          <td>
+            <span class="pill">
+              ${x.status}
+            </span>
+          </td>
+
+          <td>
+
+            <button class="btn"
+              onclick="wf(${i})">
+              Edit
+            </button>
+
+            <button class="btn danger"
+              onclick="wd(${i})">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")}
+
+    </table>
+
+  </div>
+  `
+
+  :
+
+  `
+  <div class="empty">
+    No workflows yet.
+  </div>
+  `;
+
+  return wrap(
+    "Workflows",
+    "Create and manage the processes your lab really performs.",
+    body,
+    `<button class="btn primary" onclick="wf()">
+      ＋ New workflow
+    </button>`
+  );
+
+}
+
+function wf(i=null){
+
+  let x=i==null
+    ?{
+      name:"",
+      goal:"",
+      owner:"",
+      priority:"Medium",
+      status:"Queued",
+      steps:""
+    }
+    :S.workflows[i];
+
+  modal(
+    i==null?"New workflow":"Edit workflow",
+
+    `
+      <label>What work needs to be done?</label>
+      <input id="wn" value="${esc(x.name)}">
+
+      <label>What is the goal?</label>
+      <textarea id="wg">${esc(x.goal)}</textarea>
+
+      <label>Owner</label>
+      <input id="wo" value="${esc(x.owner)}">
+
+      <label>Priority</label>
+
+      <select id="wp">
+
+        ${["Low","Medium","High"].map(v=>`
+          <option ${v==x.priority?"selected":""}>
+            ${v}
+          </option>
+        `).join("")}
+
+      </select>
+
+      <label>Status</label>
+
+      <select id="ws">
+
+        ${["Queued","Active","Complete","Paused"].map(v=>`
+          <option ${v==x.status?"selected":""}>
+            ${v}
+          </option>
+        `).join("")}
+
+      </select>
+
+      <label>Steps / procedure</label>
+      <textarea id="wst">${esc(x.steps)}</textarea>
+
+      <div class="actions">
+
+        <button class="btn"
+          onclick="closeM()">
+          Cancel
+        </button>
+
+        <button class="btn primary"
+          onclick="wfs(${i??-1})">
+          Save workflow
+        </button>
+
+      </div>
+    `
+  );
+
+}
+
+function wfs(i){
+
+  let x={
+    name:wn.value.trim(),
+    goal:wg.value.trim(),
+    owner:wo.value.trim(),
+    priority:wp.value,
+    status:ws.value,
+    steps:wst.value.trim()
+  };
+
+  if(!x.name||!x.goal||!x.owner){
+    toast("Task, goal and owner required");
+    return;
+  }
+
+  i<0?S.workflows.push(x):S.workflows[i]=x;
+
+  save();
+  closeM();
+  draw();
+
+  toast("Workflow saved");
+}
+
+function wd(i){
+
+  if(confirm("Delete workflow?")){
+    S.workflows.splice(i,1);
+    save();
+    draw();
+  }
+
+}
+
+/* ================= UPGRADES ================= */
+
+function upgrades(){
+
+  let body=S.upgrades.length?
+
+  `
+  <div class="grid">
+
+    ${S.upgrades.map((x,i)=>`
+
+      <div class="card">
+
+        <span class="pill ${x.unlocked?"green":""}">
+          ${x.unlocked?"UNLOCKED":"LOCKED"}
+        </span>
+
+        <h3>${esc(x.name)}</h3>
+
+        <p class="muted">
+          ${esc(x.description)}
+        </p>
+
+        <small>
+          Requirement:
+          ${esc(x.requirement||"Not specified")}
+          <br>
+          Cost:
+          ${esc(x.cost||"Not specified")}
+        </small>
+
+        <br><br>
+
+        <button
+          class="btn ${x.unlocked?"":"primary"}"
+          onclick="ut(${i})">
+          ${x.unlocked?"Lock":"Unlock"}
+        </button>
+
+        <button
+          class="btn danger"
+          onclick="ud(${i})">
+          Delete
+        </button>
+
+      </div>
+
+    `).join("")}
+
+  </div>
+  `
+
+  :
+
+  `
+  <div class="empty">
+    No upgrades defined.
+  </div>
+  `;
+
+  return wrap(
+    "Upgrades",
+    "Unlocking always requires your confirmation.",
+    body,
+    `<button class="btn primary" onclick="uf()">
+      ＋ Add upgrade
+    </button>`
+  );
+
+}
+
+function uf(){
+
+  modal(
+    "Add upgrade",
+
+    `
+      <label>Name</label>
+      <input id="un">
+
+      <label>Description</label>
+      <textarea id="ux"></textarea>
+
+      <label>Requirement</label>
+      <input id="ur">
+
+      <label>Cost / budget</label>
+      <input id="uc">
+
+      <div class="actions">
+
+        <button class="btn"
+          onclick="closeM()">
+          Cancel
+        </button>
+
+        <button class="btn primary"
+          onclick="us()">
+          Add
+        </button>
+
+      </div>
+    `
+  );
+
+}
+
+function us(){
+
+  if(!un.value.trim()){
+    toast("Name required");
+    return;
+  }
+
+  S.upgrades.push({
+    name:un.value.trim(),
+    description:ux.value.trim(),
+    requirement:ur.value.trim(),
+    cost:uc.value.trim(),
+    unlocked:false
+  });
+
+  save();
+  closeM();
+  draw();
+}
+
+function ut(i){
+
+  if(
+    !S.upgrades[i].unlocked &&
+    !confirm("Unlock this upgrade?")
+  ) return;
+
+  S.upgrades[i].unlocked=
+    !S.upgrades[i].unlocked;
+
+  save();
+  draw();
+}
+
+function ud(i){
+
+  if(confirm("Delete upgrade?")){
+    S.upgrades.splice(i,1);
+    save();
+    draw();
+  }
+
+}
+
+/* ================= CRISIS ================= */
+
+function crisis(){
+
+  if(!S.crisisEnabled){
+
+    return wrap(
+      "Crisis Center",
+      "Crisis mode is currently off.",
+      `
+        <div class="empty">
+          If a crisis happens,
+          enable crisis mode and add the incident yourself.
+        </div>
+      `,
+      `
+        <button class="btn primary"
+          onclick="
+            S.crisisEnabled=true;
+            save();
+            draw()
+          ">
+          Enable crisis mode
+        </button>
+      `
+    );
+
+  }
+
+  let body=S.crises.length?
+
+  `
+  <div class="table">
+
+    <table>
+
+      <tr>
+        <th>Crisis</th>
+        <th>Severity</th>
+        <th>Situation</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+
+      ${S.crises.map((x,i)=>`
+
+        <tr>
+
+          <td><b>${esc(x.name)}</b></td>
+          <td>${x.severity}</td>
+          <td>${esc(x.situation)}</td>
+
+          <td>
+            <span class="pill ${
+              x.status=="Resolved"?"green":"red"
+            }">
+              ${x.status}
+            </span>
+          </td>
+
+          <td>
+
+            <button class="btn"
+              onclick="cf(${i})">
+              Edit
+            </button>
+
+            <button class="btn danger"
+              onclick="cd(${i})">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")}
+
+    </table>
+
+  </div>
+  `
+
+  :
+
+  `
+  <div class="empty">
+    No crises recorded.
+  </div>
+  `;
+
+  return wrap(
+    "Crisis Center",
+    "Add, edit, resolve and delete real incidents.",
+    body,
+    `<button class="btn primary" onclick="cf()">
+      ＋ Add crisis
+    </button>`
+  );
+
+}
+
+function cf(i=null){
+
+  let x=i==null
+    ?{
+      name:"",
+      severity:"Medium",
+      situation:"",
+      status:"Open"
+    }
+    :S.crises[i];
+
+  modal(
+    i==null?"Add crisis":"Edit crisis",
+
+    `
+      <label>What happened?</label>
+      <input id="cn" value="${esc(x.name)}">
+
+      <label>Severity</label>
+
+      <select id="cs">
+
+        ${[
+          "Low",
+          "Medium",
+          "High",
+          "Critical"
+        ].map(v=>`
+          <option ${v==x.severity?"selected":""}>
+            ${v}
+          </option>
+        `).join("")}
+
+      </select>
+
+      <label>Situation</label>
+      <textarea id="ci">${esc(x.situation)}</textarea>
+
+      <label>Status</label>
+
+      <select id="ct">
+
+        <option ${x.status=="Open"?"selected":""}>
+          Open
+        </option>
+
+        <option ${x.status=="Resolved"?"selected":""}>
+          Resolved
+        </option>
+
+      </select>
+
+      <div class="actions">
+
+        <button class="btn"
+          onclick="closeM()">
+          Cancel
+        </button>
+
+        <button class="btn primary"
+          onclick="cfs(${i??-1})">
+          Save crisis
+        </button>
+
+      </div>
+    `
+  );
+
+}
+
+function cfs(i){
+
+  let x={
+    name:cn.value.trim(),
+    severity:cs.value,
+    situation:ci.value.trim(),
+    status:ct.value
+  };
+
+  if(!x.name||!x.situation){
+    toast("Title and situation required");
+    return;
+  }
+
+  i<0?S.crises.push(x):S.crises[i]=x;
+
+  save();
+  closeM();
+  draw();
+}
+
+function cd(i){
+
+  if(confirm("Delete crisis?")){
+    S.crises.splice(i,1);
+    save();
+    draw();
+  }
+
+}
+
+/* ================= AI CHAT ================= */
+
+function ai(){
+
+  if(!Array.isArray(S.chat)){
+    S.chat=[];
+  }
+
+  let messages=S.chat.length
+
+    ?S.chat.map((x,i)=>`
+
+      <div
+        class="msg ${x.role==="user"?"me":"bot"} ${
+          x.thinking?"thinking":""
+        }"
+        id="msg-${i}">
+
+        ${esc(x.text)}
+
+      </div>
+
+    `).join("")
+
+    :`
+      <div class="msg bot">
+        Hi ${esc(S.name)}. Ask me about your lab
+        operations, workflows, resources, upgrades,
+        or research.
+      </div>
+    `;
+
+  return wrap(
+    "AI Advisor",
+    "Ask your own question — every response gets its own chat bubble.",
+
+    `
+      <div class="card chat">
+
+        <div class="msgs" id="msgs">
+          ${messages}
+        </div>
+
+        <div class="chatbar">
+
+          <input
+            id="q"
+            placeholder="Ask your question…"
+            autocomplete="off">
+
+          <button
+            class="btn primary"
+            onclick="ask()">
+            Ask →
+          </button>
+
+        </div>
+
+      </div>
+    `,
+    ""
+  );
+
+}
+
+/* ================= ASK ================= */
+
+async function ask(){
+
+  let input=$("q");
+
+  let q=input.value.trim();
+
+  if(!q)return;
+
+  /*
+    IMPORTANT:
+    Every question creates its OWN object.
+    Therefore Thinking cannot overwrite
+    another answer.
+  */
+
+  let index=S.chat.length;
+
+  S.chat.push({
+    role:"user",
+    text:q,
+    thinking:false
+  });
+
+  let thinkingIndex=S.chat.length;
+
+  S.chat.push({
+    role:"assistant",
+    text:"Thinking…",
+    thinking:true
+  });
+
+  save();
+
+  draw();
+
+  input=$("q");
+
+  input.focus();
+
+  let m=$("msgs");
+
+  m.scrollTop=m.scrollHeight;
+
+  let context=JSON.stringify({
+    lab:S.lab,
+    resources:S.resources,
+    workflows:S.workflows,
+    upgrades:S.upgrades,
+    crises:S.crises
+  });
+
+  try{
+
+    let r=await fetch(
+      "/api/ai",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+          question:q,
+          context
+        })
+      }
+    );
+
+    let d=await r.json();
+
+    S.chat[thinkingIndex]={
+      role:"assistant",
+      text:d.answer||d.error||"No response",
+      thinking:false
+    };
+
+    save();
+
+    draw();
+
+    $("msgs").scrollTop=$("msgs").scrollHeight;
+
+  }catch(e){
+
+    S.chat[thinkingIndex]={
+      role:"assistant",
+      text:
+        "Could not reach the AI server. Start the backend and check your API configuration.",
+      thinking:false
+    };
+
+    save();
+
+    draw();
+
+  }
+
+}
+
+/* ================= ENTER KEY ================= */
+
+document.addEventListener(
+  "keydown",
+  function(e){
+
+    if(
+      e.key==="Enter" &&
+      !e.shiftKey &&
+      document.activeElement &&
+      document.activeElement.id==="q"
+    ){
+
+      e.preventDefault();
+
+      ask();
+
+    }
+
+  }
+);
+
+/* ================= MODAL ================= */
+
+function modal(t,b){
+
+  $("dialog").innerHTML=
+    `<h3>${t}</h3>${b}`;
+
+  $("modal").classList.add("show");
+
+}
+
+function closeM(){
+
+  $("modal").classList.remove("show");
+
+}
+
+$("modal").onclick=e=>{
+
+  if(e.target.id==="modal"){
+    closeM();
+  }
+
+};
+
+/* ================= START ================= */
+
+/*
+  Every fresh browser session starts
+  with the Enter Lab screen.
+*/
+
+if(sessionStorage.getItem("axiom_entered")==="yes"){
+  drawApp();
+}else{
+  landing();
+}
+
+</script>
+
+</body>
+</html>
