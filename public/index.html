@@ -327,181 +327,153 @@ button{
 }
 
 /* =========================================================
-   ROBOT
+   ROBOT // CINEMATIC MODULAR ASSEMBLY
 ========================================================= */
-
 .robot-stage{
-  width:min(520px,42vw);
+  width:min(560px,44vw);
   aspect-ratio:1;
   justify-self:center;
   position:relative;
   display:grid;
   place-items:center;
   transform:translateY(2vh);
+  perspective:1100px;
+  isolation:isolate;
 }
 
 .robot-stage:before{
   content:"";
   position:absolute;
-  inset:12%;
-  border:1px solid rgba(101,233,255,.12);
+  inset:8%;
+  border:1px solid rgba(101,233,255,.13);
   border-radius:50%;
-  box-shadow:
-    0 0 100px rgba(101,233,255,.07),
-    inset 0 0 100px rgba(101,233,255,.04);
-  animation:spin 24s linear infinite;
+  box-shadow:0 0 100px rgba(101,233,255,.06),inset 0 0 90px rgba(101,233,255,.035);
+  animation:spin 28s linear infinite;
 }
-
 .robot-stage:after{
   content:"";
   position:absolute;
-  inset:4%;
-  border:1px dashed rgba(255,255,255,.07);
+  inset:1%;
+  border:1px dashed rgba(255,255,255,.055);
   border-radius:50%;
-  animation:spin 36s linear infinite reverse;
+  animation:spin 42s linear infinite reverse;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.robot{
-  width:48%;
-  aspect-ratio:.78;
-  position:relative;
-  z-index:2;
-  filter:drop-shadow(0 30px 70px rgba(0,0,0,.7));
-  animation:robotFloat 5s ease-in-out infinite;
-}
-
-@keyframes robotFloat{
-  50%{transform:translateY(-12px)}
-}
-
-.robot-head{
-  width:72%;
-  height:34%;
+.assembly-hud{
   position:absolute;
-  left:14%;
-  top:8%;
-  border:1px solid rgba(255,255,255,.25);
-  border-radius:34px 34px 28px 28px;
-  background:
-    linear-gradient(145deg,#242c34,#080b0e 70%);
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.2),
-    0 0 50px rgba(101,233,255,.05);
+  inset:10%;
+  z-index:1;
+  pointer-events:none;
+  opacity:.7;
 }
-
-.robot-head:before{
+.assembly-hud:before,.assembly-hud:after{
   content:"";
   position:absolute;
-  left:9%;
-  right:9%;
-  top:12%;
-  bottom:17%;
-  border-radius:20px;
-  border:1px solid rgba(101,233,255,.12);
-  background:#020407;
+  background:rgba(101,233,255,.14);
 }
+.assembly-hud:before{width:100%;height:1px;top:50%;}
+.assembly-hud:after{height:100%;width:1px;left:50%;}
+.hud-corner{position:absolute;width:34px;height:34px;border-color:rgba(101,233,255,.25);border-style:solid;}
+.hud-corner.tl{top:0;left:0;border-width:1px 0 0 1px}.hud-corner.tr{top:0;right:0;border-width:1px 1px 0 0}.hud-corner.bl{bottom:0;left:0;border-width:0 0 1px 1px}.hud-corner.br{bottom:0;right:0;border-width:0 1px 1px 0}
 
-.robot-eye{
+.robot{
+  width:47%;
+  aspect-ratio:.72;
+  position:relative;
+  z-index:3;
+  transform-style:preserve-3d;
+  filter:drop-shadow(0 35px 70px rgba(0,0,0,.8));
+  animation:robotFloat 5s ease-in-out infinite;
+}
+.robot:before{
+  content:"";
   position:absolute;
-  top:42%;
-  width:23%;
-  height:10%;
-  border-radius:999px;
-  background:var(--cyan);
-  box-shadow:0 0 25px var(--cyan);
-  animation:eyePulse 2s infinite;
-}
-
-.robot-eye.left{left:22%}
-.robot-eye.right{right:22%}
-
-@keyframes eyePulse{
-  50%{opacity:.55;box-shadow:0 0 10px var(--cyan)}
-}
-
-.robot-neck{
-  position:absolute;
-  width:24%;
-  height:10%;
-  left:38%;
-  top:41%;
-  background:#171d23;
-  border:1px solid rgba(255,255,255,.16);
-}
-
-.robot-body{
-  position:absolute;
-  width:100%;
-  height:47%;
-  left:0;
-  top:48%;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:38px 38px 24px 24px;
-  background:
-    linear-gradient(160deg,#202831,#070a0d 72%);
-  box-shadow:inset 0 1px rgba(255,255,255,.16);
-}
-
-.robot-core{
-  position:absolute;
-  width:25%;
-  aspect-ratio:1;
-  left:37.5%;
-  top:20%;
+  left:20%;right:20%;bottom:-10%;height:10%;
   border-radius:50%;
-  border:1px solid rgba(215,255,63,.45);
-  background:radial-gradient(circle,var(--acid) 0 8%,rgba(215,255,63,.12) 25%,transparent 65%);
-  box-shadow:0 0 45px rgba(215,255,63,.18);
-  animation:core 2.4s ease-in-out infinite;
+  background:radial-gradient(ellipse,rgba(101,233,255,.2),transparent 70%);
+  filter:blur(12px);
 }
 
-@keyframes core{
-  50%{transform:scale(1.12);opacity:.75}
-}
-
-.robot-arm{
+.robot-part{
   position:absolute;
-  width:14%;
-  height:40%;
-  top:52%;
-  background:linear-gradient(#1b2229,#07090b);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:30px;
+  transform-style:preserve-3d;
+  opacity:0;
+  transition:opacity .35s,transform 1.05s cubic-bezier(.16,1,.3,1);
 }
+.robot-shell{position:absolute;inset:0;transform-style:preserve-3d;}
 
-.robot-arm.left{
-  left:-12%;
-  transform:rotate(8deg);
+.robot-head{
+  width:72%;height:30%;left:14%;top:6%;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:30px 30px 22px 22px;
+  background:linear-gradient(145deg,#303943 0%,#171d23 32%,#070a0d 76%);
+  box-shadow:inset 0 1px rgba(255,255,255,.24),inset 0 -18px 25px rgba(0,0,0,.42),0 12px 35px rgba(0,0,0,.45);
+  overflow:hidden;
 }
+.robot-head:before{content:"";position:absolute;left:8%;right:8%;top:13%;bottom:15%;border:1px solid rgba(101,233,255,.16);border-radius:17px;background:linear-gradient(180deg,#05080b,#010203);box-shadow:inset 0 0 25px rgba(101,233,255,.035);}
+.robot-head:after{content:"";position:absolute;left:15%;right:15%;top:7%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);}
 
-.robot-arm.right{
-  right:-12%;
-  transform:rotate(-8deg);
-}
+.robot-eye{position:absolute;top:43%;width:21%;height:8%;border-radius:999px;background:#75edff;box-shadow:0 0 22px #65e9ff,0 0 5px #fff;z-index:2;opacity:0;transition:opacity .3s;}
+.robot-eye.left{left:22%}.robot-eye.right{right:22%}
+.robot-face-line{position:absolute;left:20%;right:20%;bottom:17%;height:1px;background:rgba(101,233,255,.18);z-index:2;}
 
-.scan-line{
-  position:absolute;
-  width:100%;
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  box-shadow:0 0 14px var(--cyan);
-  animation:scan 3.5s ease-in-out infinite;
-  z-index:5;
-}
+.robot-neck{width:24%;height:10%;left:38%;top:36%;background:linear-gradient(90deg,#0a0d10,#303941,#0a0d10);border:1px solid rgba(255,255,255,.15);box-shadow:0 0 20px rgba(101,233,255,.04);}
 
-@keyframes scan{
-  0%,100%{top:12%;opacity:0}
-  20%{opacity:1}
-  80%{opacity:1}
-  100%{top:88%}
-}
+.robot-body{width:100%;height:48%;left:0;top:45%;border:1px solid rgba(255,255,255,.21);border-radius:34px 34px 22px 22px;background:linear-gradient(145deg,#303941 0%,#171d23 25%,#080b0e 72%);box-shadow:inset 0 1px rgba(255,255,255,.2),inset 0 -30px 45px rgba(0,0,0,.5);overflow:hidden;}
+.robot-body:before{content:"";position:absolute;left:10%;right:10%;top:8%;height:48%;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.035),transparent);}
+.robot-body:after{content:"";position:absolute;left:15%;right:15%;bottom:13%;height:1px;background:linear-gradient(90deg,transparent,rgba(101,233,255,.35),transparent);}
+
+.robot-core{position:absolute;width:25%;aspect-ratio:1;left:37.5%;top:18%;border-radius:50%;border:1px solid rgba(215,255,63,.55);background:radial-gradient(circle,#f1ff9b 0 5%,var(--acid) 8%,rgba(215,255,63,.16) 28%,transparent 68%);box-shadow:0 0 45px rgba(215,255,63,.18);opacity:.15;transition:opacity .5s,box-shadow .5s;}
+.robot-core:before{content:"";position:absolute;inset:20%;border:1px solid rgba(255,255,255,.3);border-radius:50%;animation:spin 3s linear infinite;}
+
+.robot-arm{width:13%;height:39%;top:48%;background:linear-gradient(145deg,#293139,#090c0f);border:1px solid rgba(255,255,255,.16);border-radius:24px;box-shadow:inset 0 1px rgba(255,255,255,.18),0 15px 30px rgba(0,0,0,.35);}
+.robot-arm.left{left:-13%}.robot-arm.right{right:-13%}
+.robot-arm:after{content:"";position:absolute;left:18%;right:18%;top:13%;bottom:13%;border-left:1px solid rgba(101,233,255,.12);border-right:1px solid rgba(101,233,255,.06);}
+.robot-shoulder{width:18%;height:16%;top:46%;border:1px solid rgba(255,255,255,.17);border-radius:50%;background:radial-gradient(circle at 35% 30%,#45515a,#101419 65%);box-shadow:0 0 22px rgba(101,233,255,.04);}
+.robot-shoulder.left{left:-9%}.robot-shoulder.right{right:-9%}
+.robot-hip{width:25%;height:9%;left:37.5%;top:88%;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#0a0d10;}
+.robot-leg{width:17%;height:28%;top:90%;background:linear-gradient(180deg,#222a31,#080b0e);border:1px solid rgba(255,255,255,.14);border-radius:10px;}
+.robot-leg.left{left:22%}.robot-leg.right{right:22%}
+.robot-leg:after{content:"";position:absolute;bottom:-5%;left:-12%;right:-12%;height:18%;border:1px solid rgba(255,255,255,.13);border-radius:8px;background:#11171c;}
+
+.scan-line{position:absolute;width:120%;left:-10%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 14px var(--cyan);opacity:0;z-index:8;}
+
+.robot-stage.assembling .robot-part{opacity:1;}
+.robot-stage.assembling .head-part{transform:translate3d(0,-210px,90px) rotateX(-28deg) rotateZ(-7deg);animation:partHead 1.8s .05s var(--ease) forwards;}
+.robot-stage.assembling .neck-part{transform:translate3d(0,-120px,60px) rotateZ(6deg);animation:partNeck 1.2s .55s var(--ease) forwards;}
+.robot-stage.assembling .body-part{transform:translate3d(0,150px,-40px) rotateX(18deg) scale(.92);animation:partBody 1.7s .35s var(--ease) forwards;}
+.robot-stage.assembling .arm-left-part{transform:translate3d(-150px,20px,80px) rotateZ(-30deg) rotateY(-20deg);animation:partLeft 1.55s .8s var(--ease) forwards;}
+.robot-stage.assembling .arm-right-part{transform:translate3d(150px,10px,80px) rotateZ(30deg) rotateY(20deg);animation:partRight 1.55s .9s var(--ease) forwards;}
+.robot-stage.assembling .shoulder-left-part{transform:translate3d(-170px,-45px,100px) rotateY(-40deg);animation:partLeft 1.35s 1.05s var(--ease) forwards;}
+.robot-stage.assembling .shoulder-right-part{transform:translate3d(170px,-45px,100px) rotateY(40deg);animation:partRight 1.35s 1.15s var(--ease) forwards;}
+.robot-stage.assembling .hip-part{transform:translate3d(0,110px,-20px) rotateX(30deg);animation:partBody 1.2s 1.25s var(--ease) forwards;}
+.robot-stage.assembling .leg-left-part{transform:translate3d(-90px,230px,30px) rotateZ(-9deg);animation:partLeg 1.45s 1.35s var(--ease) forwards;}
+.robot-stage.assembling .leg-right-part{transform:translate3d(90px,230px,30px) rotateZ(9deg);animation:partLeg 1.45s 1.45s var(--ease) forwards;}
+.robot-stage.assembling .scan-line{opacity:.8;animation:scanAssemble 2.7s 1.2s ease-in-out infinite;}
+.robot-stage.assembled .robot-part{opacity:1;animation:none!important;transform:none!important;}
+.robot-stage.assembled .robot-eye{opacity:1;animation:eyePulse 2s infinite;}
+.robot-stage.assembled .robot-core{opacity:1;box-shadow:0 0 70px rgba(215,255,63,.45);animation:core 2.4s ease-in-out infinite;}
+.robot-stage.assembled .scan-line{opacity:.55;animation:scan 3.5s ease-in-out infinite;}
+
+@keyframes partHead{70%{transform:translate3d(0,-10px,10px) rotateX(2deg) rotateZ(0)}100%{transform:none}}
+@keyframes partNeck{70%{transform:translate3d(0,-4px,4px) rotateZ(0)}100%{transform:none}}
+@keyframes partBody{70%{transform:translate3d(0,5px,4px) rotateX(-2deg) scale(1.01)}100%{transform:none}}
+@keyframes partLeft{70%{transform:translate3d(-4px,2px,3px) rotateZ(1deg)}100%{transform:none}}
+@keyframes partRight{70%{transform:translate3d(4px,2px,3px) rotateZ(-1deg)}100%{transform:none}}
+@keyframes partLeg{70%{transform:translate3d(0,-5px,3px) rotateZ(0)}100%{transform:none}}
+@keyframes scanAssemble{0%{top:5%;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:95%;opacity:0}}
+@keyframes robotFloat{50%{transform:translateY(-10px) rotateY(-1deg)}}
+
+.assembly-label{position:absolute;left:8%;bottom:7%;font:8px "DM Mono",monospace;letter-spacing:.14em;color:#66737d;z-index:6;}
+.assembly-label b{color:var(--cyan);font-weight:500;}
+
+@media(max-width:1050px){.robot-stage{width:min(500px,78vw)}}
+@media(max-width:800px){.robot-stage{width:min(390px,88vw)}}
 
 /* =========================================================
    ACCESS INTERFACE
+========================================================= */
+
 ========================================================= */
 
 .access{
@@ -1997,29 +1969,30 @@ button{
 
     </div>
 
-    <!-- ROBOT -->
-
+    <!-- ROBOT // MODULAR ASSEMBLY -->
     <div class="robot-stage" id="robotStage">
+      <div class="assembly-hud">
+        <span class="hud-corner tl"></span><span class="hud-corner tr"></span>
+        <span class="hud-corner bl"></span><span class="hud-corner br"></span>
+      </div>
 
       <div class="robot" id="robot">
-
-        <div class="robot-head">
-          <div class="robot-eye left"></div>
-          <div class="robot-eye right"></div>
+        <div class="robot-shell">
+          <div class="robot-part robot-head head-part"><div class="robot-eye left"></div><div class="robot-eye right"></div><div class="robot-face-line"></div></div>
+          <div class="robot-part robot-neck neck-part"></div>
+          <div class="robot-part robot-body body-part"><div class="robot-core"></div></div>
+          <div class="robot-part robot-shoulder shoulder-left-part left"></div>
+          <div class="robot-part robot-shoulder shoulder-right-part right"></div>
+          <div class="robot-part robot-arm arm-left-part left"></div>
+          <div class="robot-part robot-arm arm-right-part right"></div>
+          <div class="robot-part robot-hip hip-part"></div>
+          <div class="robot-part robot-leg leg-left-part left"></div>
+          <div class="robot-part robot-leg leg-right-part right"></div>
+          <div class="scan-line"></div>
         </div>
-
-        <div class="robot-neck"></div>
-
-        <div class="robot-body">
-          <div class="robot-core"></div>
-        </div>
-
-        <div class="robot-arm left"></div>
-        <div class="robot-arm right"></div>
-
-        <div class="scan-line"></div>
-
       </div>
+
+      <div class="assembly-label" id="assemblyLabel">ASSEMBLY STATUS // <b>STANDBY</b></div>
 
       <!-- ACCESS PANEL -->
 
@@ -3122,49 +3095,38 @@ function bootSound(){
 
 
 /* =========================================================
-   LANDING BOOT SEQUENCE
+   LANDING BOOT // CINEMATIC ASSEMBLY
 ========================================================= */
-
 let booted = false;
-
 $("#enterLab").addEventListener("click",()=>{
-
   if(booted) return;
-
   booted = true;
-
   bootSound();
+  const btn=$("#enterLab"), stage=$("#robotStage"), access=$("#accessPanel"), label=$("#assemblyLabel");
+  btn.textContent="INITIALIZING...";
+  stage.classList.add("assembling");
+  label.innerHTML='ASSEMBLY STATUS // <b>MODULES INBOUND</b>';
 
-  const btn = $("#enterLab");
-  const robot = $("#robot");
-  const access = $("#accessPanel");
-
-  btn.textContent = "INITIALIZING...";
-
-  robot.style.animation =
-    "robotFloat 2s ease-in-out infinite";
-
-  setTimeout(()=>{
-    btn.textContent = "SYSTEM BOOT";
-  },700);
-
-  setTimeout(()=>{
-    btn.textContent = "ASSEMBLING CORE";
-  },1500);
-
-  setTimeout(()=>{
-    btn.textContent = "NEURAL LINK";
-    $(".robot-core").style.boxShadow =
-      "0 0 80px rgba(215,255,63,.5)";
-  },2300);
+  const steps=[
+    [650,"FRAME TELEMETRY"],
+    [1300,"HEAD MODULE / ALIGN"],
+    [1950,"TORSO / LOCKING"],
+    [2550,"LIMBS / SYNCHRONIZING"],
+    [3250,"MECHANICAL LOCK"],
+    [3900,"POWER CORE / CHARGING"]
+  ];
+  steps.forEach(([time,text],i)=>setTimeout(()=>{
+    btn.textContent=text;
+    label.innerHTML='ASSEMBLY STATUS // <b>'+text+'</b>';
+    if(i===5){stage.classList.add("assembled");}
+  },time));
 
   setTimeout(()=>{
-    btn.style.opacity = "0";
-    access.classList.add("visible");
-  },3100);
-
+    btn.style.opacity="0";
+    label.innerHTML='ASSEMBLY STATUS // <b>NEURAL CORE ONLINE</b>';
+  },4700);
+  setTimeout(()=>access.classList.add("visible"),5000);
 });
-
 
 /* =========================================================
    ACCESS
