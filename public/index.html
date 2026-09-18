@@ -327,153 +327,181 @@ button{
 }
 
 /* =========================================================
-   ROBOT // CINEMATIC MODULAR ASSEMBLY
+   ROBOT
 ========================================================= */
+
 .robot-stage{
-  width:min(560px,44vw);
+  width:min(520px,42vw);
   aspect-ratio:1;
   justify-self:center;
   position:relative;
   display:grid;
   place-items:center;
   transform:translateY(2vh);
-  perspective:1100px;
-  isolation:isolate;
 }
 
 .robot-stage:before{
   content:"";
   position:absolute;
-  inset:8%;
-  border:1px solid rgba(101,233,255,.13);
+  inset:12%;
+  border:1px solid rgba(101,233,255,.12);
   border-radius:50%;
-  box-shadow:0 0 100px rgba(101,233,255,.06),inset 0 0 90px rgba(101,233,255,.035);
-  animation:spin 28s linear infinite;
+  box-shadow:
+    0 0 100px rgba(101,233,255,.07),
+    inset 0 0 100px rgba(101,233,255,.04);
+  animation:spin 24s linear infinite;
 }
+
 .robot-stage:after{
   content:"";
   position:absolute;
-  inset:1%;
-  border:1px dashed rgba(255,255,255,.055);
+  inset:4%;
+  border:1px dashed rgba(255,255,255,.07);
   border-radius:50%;
-  animation:spin 42s linear infinite reverse;
+  animation:spin 36s linear infinite reverse;
 }
 
-.assembly-hud{
-  position:absolute;
-  inset:10%;
-  z-index:1;
-  pointer-events:none;
-  opacity:.7;
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
-.assembly-hud:before,.assembly-hud:after{
-  content:"";
-  position:absolute;
-  background:rgba(101,233,255,.14);
-}
-.assembly-hud:before{width:100%;height:1px;top:50%;}
-.assembly-hud:after{height:100%;width:1px;left:50%;}
-.hud-corner{position:absolute;width:34px;height:34px;border-color:rgba(101,233,255,.25);border-style:solid;}
-.hud-corner.tl{top:0;left:0;border-width:1px 0 0 1px}.hud-corner.tr{top:0;right:0;border-width:1px 1px 0 0}.hud-corner.bl{bottom:0;left:0;border-width:0 0 1px 1px}.hud-corner.br{bottom:0;right:0;border-width:0 1px 1px 0}
 
 .robot{
-  width:47%;
-  aspect-ratio:.72;
+  width:48%;
+  aspect-ratio:.78;
   position:relative;
-  z-index:3;
-  transform-style:preserve-3d;
-  filter:drop-shadow(0 35px 70px rgba(0,0,0,.8));
+  z-index:2;
+  filter:drop-shadow(0 30px 70px rgba(0,0,0,.7));
   animation:robotFloat 5s ease-in-out infinite;
 }
-.robot:before{
-  content:"";
-  position:absolute;
-  left:20%;right:20%;bottom:-10%;height:10%;
-  border-radius:50%;
-  background:radial-gradient(ellipse,rgba(101,233,255,.2),transparent 70%);
-  filter:blur(12px);
-}
 
-.robot-part{
-  position:absolute;
-  transform-style:preserve-3d;
-  opacity:0;
-  transition:opacity .35s,transform 1.05s cubic-bezier(.16,1,.3,1);
+@keyframes robotFloat{
+  50%{transform:translateY(-12px)}
 }
-.robot-shell{position:absolute;inset:0;transform-style:preserve-3d;}
 
 .robot-head{
-  width:72%;height:30%;left:14%;top:6%;
-  border:1px solid rgba(255,255,255,.24);
-  border-radius:30px 30px 22px 22px;
-  background:linear-gradient(145deg,#303943 0%,#171d23 32%,#070a0d 76%);
-  box-shadow:inset 0 1px rgba(255,255,255,.24),inset 0 -18px 25px rgba(0,0,0,.42),0 12px 35px rgba(0,0,0,.45);
-  overflow:hidden;
+  width:72%;
+  height:34%;
+  position:absolute;
+  left:14%;
+  top:8%;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:34px 34px 28px 28px;
+  background:
+    linear-gradient(145deg,#242c34,#080b0e 70%);
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.2),
+    0 0 50px rgba(101,233,255,.05);
 }
-.robot-head:before{content:"";position:absolute;left:8%;right:8%;top:13%;bottom:15%;border:1px solid rgba(101,233,255,.16);border-radius:17px;background:linear-gradient(180deg,#05080b,#010203);box-shadow:inset 0 0 25px rgba(101,233,255,.035);}
-.robot-head:after{content:"";position:absolute;left:15%;right:15%;top:7%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);}
 
-.robot-eye{position:absolute;top:43%;width:21%;height:8%;border-radius:999px;background:#75edff;box-shadow:0 0 22px #65e9ff,0 0 5px #fff;z-index:2;opacity:0;transition:opacity .3s;}
-.robot-eye.left{left:22%}.robot-eye.right{right:22%}
-.robot-face-line{position:absolute;left:20%;right:20%;bottom:17%;height:1px;background:rgba(101,233,255,.18);z-index:2;}
+.robot-head:before{
+  content:"";
+  position:absolute;
+  left:9%;
+  right:9%;
+  top:12%;
+  bottom:17%;
+  border-radius:20px;
+  border:1px solid rgba(101,233,255,.12);
+  background:#020407;
+}
 
-.robot-neck{width:24%;height:10%;left:38%;top:36%;background:linear-gradient(90deg,#0a0d10,#303941,#0a0d10);border:1px solid rgba(255,255,255,.15);box-shadow:0 0 20px rgba(101,233,255,.04);}
+.robot-eye{
+  position:absolute;
+  top:42%;
+  width:23%;
+  height:10%;
+  border-radius:999px;
+  background:var(--cyan);
+  box-shadow:0 0 25px var(--cyan);
+  animation:eyePulse 2s infinite;
+}
 
-.robot-body{width:100%;height:48%;left:0;top:45%;border:1px solid rgba(255,255,255,.21);border-radius:34px 34px 22px 22px;background:linear-gradient(145deg,#303941 0%,#171d23 25%,#080b0e 72%);box-shadow:inset 0 1px rgba(255,255,255,.2),inset 0 -30px 45px rgba(0,0,0,.5);overflow:hidden;}
-.robot-body:before{content:"";position:absolute;left:10%;right:10%;top:8%;height:48%;border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.035),transparent);}
-.robot-body:after{content:"";position:absolute;left:15%;right:15%;bottom:13%;height:1px;background:linear-gradient(90deg,transparent,rgba(101,233,255,.35),transparent);}
+.robot-eye.left{left:22%}
+.robot-eye.right{right:22%}
 
-.robot-core{position:absolute;width:25%;aspect-ratio:1;left:37.5%;top:18%;border-radius:50%;border:1px solid rgba(215,255,63,.55);background:radial-gradient(circle,#f1ff9b 0 5%,var(--acid) 8%,rgba(215,255,63,.16) 28%,transparent 68%);box-shadow:0 0 45px rgba(215,255,63,.18);opacity:.15;transition:opacity .5s,box-shadow .5s;}
-.robot-core:before{content:"";position:absolute;inset:20%;border:1px solid rgba(255,255,255,.3);border-radius:50%;animation:spin 3s linear infinite;}
+@keyframes eyePulse{
+  50%{opacity:.55;box-shadow:0 0 10px var(--cyan)}
+}
 
-.robot-arm{width:13%;height:39%;top:48%;background:linear-gradient(145deg,#293139,#090c0f);border:1px solid rgba(255,255,255,.16);border-radius:24px;box-shadow:inset 0 1px rgba(255,255,255,.18),0 15px 30px rgba(0,0,0,.35);}
-.robot-arm.left{left:-13%}.robot-arm.right{right:-13%}
-.robot-arm:after{content:"";position:absolute;left:18%;right:18%;top:13%;bottom:13%;border-left:1px solid rgba(101,233,255,.12);border-right:1px solid rgba(101,233,255,.06);}
-.robot-shoulder{width:18%;height:16%;top:46%;border:1px solid rgba(255,255,255,.17);border-radius:50%;background:radial-gradient(circle at 35% 30%,#45515a,#101419 65%);box-shadow:0 0 22px rgba(101,233,255,.04);}
-.robot-shoulder.left{left:-9%}.robot-shoulder.right{right:-9%}
-.robot-hip{width:25%;height:9%;left:37.5%;top:88%;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#0a0d10;}
-.robot-leg{width:17%;height:28%;top:90%;background:linear-gradient(180deg,#222a31,#080b0e);border:1px solid rgba(255,255,255,.14);border-radius:10px;}
-.robot-leg.left{left:22%}.robot-leg.right{right:22%}
-.robot-leg:after{content:"";position:absolute;bottom:-5%;left:-12%;right:-12%;height:18%;border:1px solid rgba(255,255,255,.13);border-radius:8px;background:#11171c;}
+.robot-neck{
+  position:absolute;
+  width:24%;
+  height:10%;
+  left:38%;
+  top:41%;
+  background:#171d23;
+  border:1px solid rgba(255,255,255,.16);
+}
 
-.scan-line{position:absolute;width:120%;left:-10%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 14px var(--cyan);opacity:0;z-index:8;}
+.robot-body{
+  position:absolute;
+  width:100%;
+  height:47%;
+  left:0;
+  top:48%;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:38px 38px 24px 24px;
+  background:
+    linear-gradient(160deg,#202831,#070a0d 72%);
+  box-shadow:inset 0 1px rgba(255,255,255,.16);
+}
 
-.robot-stage.assembling .robot-part{opacity:1;}
-.robot-stage.assembling .head-part{transform:translate3d(0,-210px,90px) rotateX(-28deg) rotateZ(-7deg);animation:partHead 1.8s .05s var(--ease) forwards;}
-.robot-stage.assembling .neck-part{transform:translate3d(0,-120px,60px) rotateZ(6deg);animation:partNeck 1.2s .55s var(--ease) forwards;}
-.robot-stage.assembling .body-part{transform:translate3d(0,150px,-40px) rotateX(18deg) scale(.92);animation:partBody 1.7s .35s var(--ease) forwards;}
-.robot-stage.assembling .arm-left-part{transform:translate3d(-150px,20px,80px) rotateZ(-30deg) rotateY(-20deg);animation:partLeft 1.55s .8s var(--ease) forwards;}
-.robot-stage.assembling .arm-right-part{transform:translate3d(150px,10px,80px) rotateZ(30deg) rotateY(20deg);animation:partRight 1.55s .9s var(--ease) forwards;}
-.robot-stage.assembling .shoulder-left-part{transform:translate3d(-170px,-45px,100px) rotateY(-40deg);animation:partLeft 1.35s 1.05s var(--ease) forwards;}
-.robot-stage.assembling .shoulder-right-part{transform:translate3d(170px,-45px,100px) rotateY(40deg);animation:partRight 1.35s 1.15s var(--ease) forwards;}
-.robot-stage.assembling .hip-part{transform:translate3d(0,110px,-20px) rotateX(30deg);animation:partBody 1.2s 1.25s var(--ease) forwards;}
-.robot-stage.assembling .leg-left-part{transform:translate3d(-90px,230px,30px) rotateZ(-9deg);animation:partLeg 1.45s 1.35s var(--ease) forwards;}
-.robot-stage.assembling .leg-right-part{transform:translate3d(90px,230px,30px) rotateZ(9deg);animation:partLeg 1.45s 1.45s var(--ease) forwards;}
-.robot-stage.assembling .scan-line{opacity:.8;animation:scanAssemble 2.7s 1.2s ease-in-out infinite;}
-.robot-stage.assembled .robot-part{opacity:1;animation:none!important;transform:none!important;}
-.robot-stage.assembled .robot-eye{opacity:1;animation:eyePulse 2s infinite;}
-.robot-stage.assembled .robot-core{opacity:1;box-shadow:0 0 70px rgba(215,255,63,.45);animation:core 2.4s ease-in-out infinite;}
-.robot-stage.assembled .scan-line{opacity:.55;animation:scan 3.5s ease-in-out infinite;}
+.robot-core{
+  position:absolute;
+  width:25%;
+  aspect-ratio:1;
+  left:37.5%;
+  top:20%;
+  border-radius:50%;
+  border:1px solid rgba(215,255,63,.45);
+  background:radial-gradient(circle,var(--acid) 0 8%,rgba(215,255,63,.12) 25%,transparent 65%);
+  box-shadow:0 0 45px rgba(215,255,63,.18);
+  animation:core 2.4s ease-in-out infinite;
+}
 
-@keyframes partHead{70%{transform:translate3d(0,-10px,10px) rotateX(2deg) rotateZ(0)}100%{transform:none}}
-@keyframes partNeck{70%{transform:translate3d(0,-4px,4px) rotateZ(0)}100%{transform:none}}
-@keyframes partBody{70%{transform:translate3d(0,5px,4px) rotateX(-2deg) scale(1.01)}100%{transform:none}}
-@keyframes partLeft{70%{transform:translate3d(-4px,2px,3px) rotateZ(1deg)}100%{transform:none}}
-@keyframes partRight{70%{transform:translate3d(4px,2px,3px) rotateZ(-1deg)}100%{transform:none}}
-@keyframes partLeg{70%{transform:translate3d(0,-5px,3px) rotateZ(0)}100%{transform:none}}
-@keyframes scanAssemble{0%{top:5%;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:95%;opacity:0}}
-@keyframes robotFloat{50%{transform:translateY(-10px) rotateY(-1deg)}}
+@keyframes core{
+  50%{transform:scale(1.12);opacity:.75}
+}
 
-.assembly-label{position:absolute;left:8%;bottom:7%;font:8px "DM Mono",monospace;letter-spacing:.14em;color:#66737d;z-index:6;}
-.assembly-label b{color:var(--cyan);font-weight:500;}
+.robot-arm{
+  position:absolute;
+  width:14%;
+  height:40%;
+  top:52%;
+  background:linear-gradient(#1b2229,#07090b);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:30px;
+}
 
-@media(max-width:1050px){.robot-stage{width:min(500px,78vw)}}
-@media(max-width:800px){.robot-stage{width:min(390px,88vw)}}
+.robot-arm.left{
+  left:-12%;
+  transform:rotate(8deg);
+}
+
+.robot-arm.right{
+  right:-12%;
+  transform:rotate(-8deg);
+}
+
+.scan-line{
+  position:absolute;
+  width:100%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  box-shadow:0 0 14px var(--cyan);
+  animation:scan 3.5s ease-in-out infinite;
+  z-index:5;
+}
+
+@keyframes scan{
+  0%,100%{top:12%;opacity:0}
+  20%{opacity:1}
+  80%{opacity:1}
+  100%{top:88%}
+}
 
 /* =========================================================
    ACCESS INTERFACE
-========================================================= */
-
 ========================================================= */
 
 .access{
@@ -1914,6 +1942,58 @@ button{
     display:none;
   }
 }
+
+/* =========================================================
+   AXIOM V6 — CINEMATIC MECHANICAL ASSEMBLY
+========================================================= */
+#landing{background:radial-gradient(circle at 50% 58%,rgba(28,53,68,.18),transparent 35%),#02070b;overflow:hidden}
+#landing:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 55%,transparent 0 18%,rgba(0,0,0,.18) 42%,rgba(0,0,0,.72) 100%);z-index:2}
+.robot-stage{position:relative;z-index:5;min-height:610px;display:flex;align-items:center;justify-content:center;perspective:1200px;overflow:visible}
+.robot{position:relative;width:360px;height:520px;transform-style:preserve-3d;filter:drop-shadow(0 30px 40px rgba(0,0,0,.65));opacity:.08;transform:translateY(40px) scale(.92);transition:opacity 1s,transform 1.2s cubic-bezier(.16,1,.3,1)}
+.robot.assembly-live{opacity:1;transform:translateY(0) scale(1)}
+.robot:before{content:"";position:absolute;inset:4% 16%;border-radius:48%;background:radial-gradient(circle,rgba(130,220,255,.08),transparent 58%);filter:blur(18px);transform:translateZ(-70px)}
+.robot-head,.robot-neck,.robot-body,.robot-arm,.robot-leg,.robot-shoulder,.robot-hip,.robot-foot{position:absolute;box-sizing:border-box;transform-style:preserve-3d;opacity:0;filter:brightness(.7);transition:opacity .35s,transform .8s cubic-bezier(.16,1,.3,1),filter .6s}
+.robot-head{width:112px;height:78px;left:124px;top:32px;border:2px solid #4c6873;border-radius:20px 20px 13px 13px;background:linear-gradient(145deg,#34444b,#111a1e 48%,#56656a);box-shadow:inset 0 0 0 5px #1b262b,0 0 30px rgba(92,205,255,.08)}
+.robot-head:before{content:"";position:absolute;left:13px;right:13px;top:22px;height:23px;background:#071014;border:1px solid #6b8790;clip-path:polygon(8% 0,92% 0,100% 65%,78% 100%,22% 100%,0 65%);box-shadow:inset 0 0 18px rgba(105,225,255,.18)}
+.robot-head:after{content:"AX-01";position:absolute;bottom:6px;left:12px;font:7px/1 monospace;color:#94b5be;letter-spacing:2px}
+.robot-eye{position:absolute;top:29px;width:27px;height:5px;background:#d7ff3f;box-shadow:0 0 8px #d7ff3f,0 0 24px rgba(215,255,63,.7);opacity:0;transition:opacity .15s}
+.robot-eye.left{left:27px}.robot-eye.right{right:27px}
+.robot-neck{width:62px;height:43px;left:149px;top:99px;border:2px solid #52646b;background:repeating-linear-gradient(90deg,#182226 0 7px,#68777b 8px 10px,#182226 11px 17px);border-radius:8px}
+.robot-body{width:178px;height:205px;left:91px;top:132px;border:2px solid #536970;background:linear-gradient(150deg,#44565d,#131d21 40%,#28383e 72%,#65767a);clip-path:polygon(17% 0,83% 0,100% 19%,91% 93%,72% 100%,28% 100%,9% 93%,0 19%);box-shadow:inset 0 0 0 8px #182328,0 15px 35px rgba(0,0,0,.55)}
+.robot-body:before{content:"";position:absolute;left:33px;right:33px;top:20px;height:66px;border:1px solid #70848a;clip-path:polygon(15% 0,85% 0,100% 100%,0 100%);background:linear-gradient(145deg,#2c3c42,#10181c)}
+.robot-body:after{content:"";position:absolute;left:40px;right:40px;bottom:22px;height:45px;border:1px solid #4c646c;background:linear-gradient(#18252a,#091014);box-shadow:inset 0 0 18px rgba(215,255,63,.1)}
+.robot-core{position:absolute;width:48px;height:48px;left:65px;top:100px;border:2px solid #8ba0a5;transform:rotate(45deg);background:radial-gradient(circle,#eaff9a 0 7%,#91b94b 8% 25%,#18251c 48%,#060b0e 70%);box-shadow:0 0 12px rgba(215,255,63,.35),inset 0 0 15px rgba(215,255,63,.25);transition:box-shadow 1s}
+.robot-arm{width:58px;height:160px;top:150px;border:2px solid #4d626a;background:linear-gradient(145deg,#53666c,#172126 45%,#3f5056);border-radius:17px;box-shadow:inset 0 0 0 5px #1a252a}
+.robot-arm:before,.robot-arm:after{content:"";position:absolute;left:10px;right:10px;height:42px;border:1px solid #71848a;background:#202e33;box-shadow:inset 0 0 10px #060a0c}
+.robot-arm:before{top:12px}.robot-arm:after{bottom:12px}
+.robot-arm.left{left:24px;transform:translateX(-110px) rotate(-9deg)}.robot-arm.right{right:24px;transform:translateX(110px) rotate(9deg)}
+.robot-shoulder{width:72px;height:67px;top:139px;border:2px solid #61737a;border-radius:18px;background:linear-gradient(145deg,#697a7e,#1c292e 50%,#43565d);box-shadow:0 0 20px rgba(0,0,0,.5)}
+.robot-shoulder.left{left:49px}.robot-shoulder.right{right:49px}
+.robot-hip{width:130px;height:60px;left:115px;top:330px;border:2px solid #556a71;background:linear-gradient(#43545a,#172126);clip-path:polygon(12% 0,88% 0,100% 30%,91% 100%,9% 100%,0 30%)}
+.robot-leg{width:72px;height:155px;top:377px;border:2px solid #4d626a;background:linear-gradient(145deg,#596b70,#182328 45%,#3d4e55);border-radius:17px;box-shadow:inset 0 0 0 6px #182327}
+.robot-leg:after{content:"";position:absolute;left:12px;right:12px;top:55px;height:8px;background:#0a1013;border:1px solid #6b7f85;box-shadow:0 42px 0 #0a1013}
+.robot-leg.left{left:91px}.robot-leg.right{right:91px}
+.robot-foot{width:92px;height:48px;top:500px;border:2px solid #556970;background:linear-gradient(145deg,#65777b,#172126);clip-path:polygon(8% 0,92% 0,100% 72%,87% 100%,0 100%,0 30%)}
+.robot-foot.left{left:75px}.robot-foot.right{right:75px}
+.robot-stage.assembly .robot-head,.robot-stage.assembly .robot-neck,.robot-stage.assembly .robot-body,.robot-stage.assembly .robot-arm,.robot-stage.assembly .robot-shoulder,.robot-stage.assembly .robot-hip,.robot-stage.assembly .robot-leg,.robot-stage.assembly .robot-foot{opacity:1;filter:brightness(1)}
+.robot-stage.assembly .robot-head{transform:translateY(0) rotateX(0)}
+.robot-stage.assembly .robot-neck{transform:translateY(0)}
+.robot-stage.assembly .robot-body{transform:translateY(0)}
+.robot-stage.assembly .robot-arm.left{transform:translateX(0) rotate(-9deg)}.robot-stage.assembly .robot-arm.right{transform:translateX(0) rotate(9deg)}
+.robot-stage.assembly .robot-shoulder.left,.robot-stage.assembly .robot-shoulder.right,.robot-stage.assembly .robot-hip,.robot-stage.assembly .robot-leg,.robot-stage.assembly .robot-foot{transform:translate(0)}
+.assembly-hud{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:min(680px,88vw);text-align:center;font:10px/1.5 monospace;letter-spacing:3px;color:#8ba7b0;z-index:10}
+.assembly-progress{height:2px;background:#122127;margin:10px 0;overflow:hidden}.assembly-progress span{display:block;width:0;height:100%;background:#d7ff3f;box-shadow:0 0 14px #d7ff3f;transition:width .35s}
+.assembly-status{min-height:18px}.assembly-status strong{color:#d7ff3f;font-weight:500}
+.sparks{position:absolute;inset:0;pointer-events:none;z-index:12}.spark{position:absolute;width:2px;height:14px;background:#d7ff3f;box-shadow:0 0 8px #d7ff3f;opacity:0;animation:sparkFly .45s linear forwards}
+@keyframes sparkFly{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(70deg)}}
+.setup-panel{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(2,7,11,.76);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .7s}.setup-panel.visible{opacity:1;pointer-events:auto}
+.setup-card{width:min(430px,90vw);padding:30px;border:1px solid #38515a;background:linear-gradient(145deg,rgba(12,23,28,.97),rgba(4,10,14,.98));box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 0 35px rgba(125,220,255,.04)}
+.setup-card h3{font-size:25px;letter-spacing:3px;margin:7px 0}.setup-card p{color:#718990;font-size:12px;line-height:1.7;margin-bottom:20px}.setup-card label{display:block;font:9px monospace;letter-spacing:2px;color:#8ba7b0;margin:15px 0 7px}.setup-card input{width:100%;padding:13px 14px;background:#071014;border:1px solid #29414a;color:#e8f1f2;outline:none}.setup-card input:focus{border-color:#d7ff3f;box-shadow:0 0 0 1px rgba(215,255,63,.2)}
+.setup-btn{margin-top:20px;width:100%;padding:14px;border:1px solid #d7ff3f;background:#d7ff3f;color:#071014;font:700 10px monospace;letter-spacing:2px;cursor:pointer}
+.identity-display{position:absolute;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .8s}.identity-display.visible{opacity:1}.identity-display .identity-inner{font-family:monospace;letter-spacing:4px}.identity-display .axiom{font-size:13px;color:#91aab1}.identity-display .welcome{font-size:34px;margin:16px 0;color:#edf6f7}.identity-display .operator,.identity-display .lab{font-size:14px;color:#d7ff3f;margin:7px 0}.identity-display .lab{color:#9bd8e8}
+body.audio-on .nav-status:after{content:" // AUDIO LINK";color:#d7ff3f}
+@media(max-width:900px){.robot-stage{min-height:560px;transform:scale(.82)}.hero-side{display:none}.hero-copy{position:relative;z-index:8}.assembly-hud{bottom:0}}
+
 </style>
 </head>
 
@@ -1969,68 +2049,44 @@ button{
 
     </div>
 
-    <!-- ROBOT // MODULAR ASSEMBLY -->
+    <!-- CINEMATIC MECHANICAL ASSEMBLY -->
     <div class="robot-stage" id="robotStage">
-      <div class="assembly-hud">
-        <span class="hud-corner tl"></span><span class="hud-corner tr"></span>
-        <span class="hud-corner bl"></span><span class="hud-corner br"></span>
-      </div>
-
       <div class="robot" id="robot">
-        <div class="robot-shell">
-          <div class="robot-part robot-head head-part"><div class="robot-eye left"></div><div class="robot-eye right"></div><div class="robot-face-line"></div></div>
-          <div class="robot-part robot-neck neck-part"></div>
-          <div class="robot-part robot-body body-part"><div class="robot-core"></div></div>
-          <div class="robot-part robot-shoulder shoulder-left-part left"></div>
-          <div class="robot-part robot-shoulder shoulder-right-part right"></div>
-          <div class="robot-part robot-arm arm-left-part left"></div>
-          <div class="robot-part robot-arm arm-right-part right"></div>
-          <div class="robot-part robot-hip hip-part"></div>
-          <div class="robot-part robot-leg leg-left-part left"></div>
-          <div class="robot-part robot-leg leg-right-part right"></div>
-          <div class="scan-line"></div>
+        <div class="robot-head"><div class="robot-eye left"></div><div class="robot-eye right"></div></div>
+        <div class="robot-neck"></div>
+        <div class="robot-shoulder left"></div><div class="robot-shoulder right"></div>
+        <div class="robot-body"><div class="robot-core"></div></div>
+        <div class="robot-arm left"></div><div class="robot-arm right"></div>
+        <div class="robot-hip"></div>
+        <div class="robot-leg left"></div><div class="robot-leg right"></div>
+        <div class="robot-foot left"></div><div class="robot-foot right"></div>
+      </div>
+      <div class="sparks" id="sparks"></div>
+      <div class="assembly-hud">
+        <div id="assemblyStatus">SYSTEM STANDBY // PRESS INITIALIZE</div>
+        <div class="assembly-progress"><span id="assemblyProgress"></span></div>
+        <div id="assemblyPhase">FRAME ASSEMBLY 0%</div>
+      </div>
+      <div class="setup-panel" id="setupPanel">
+        <div class="setup-card">
+          <div class="eyebrow"><i></i> OPERATOR SETUP</div>
+          <h3>CONFIGURE LAB</h3>
+          <p>Assembly complete. Enter the identity of the operator and the laboratory manually.</p>
+          <label for="setupOperator">OPERATOR NAME</label>
+          <input id="setupOperator" type="text" autocomplete="off" placeholder="Enter your name">
+          <label for="setupLab">LAB NAME</label>
+          <input id="setupLab" type="text" autocomplete="off" placeholder="Enter lab name">
+          <button class="setup-btn" id="setupContinue">CONTINUE →</button>
         </div>
       </div>
-
-      <div class="assembly-label" id="assemblyLabel">ASSEMBLY STATUS // <b>STANDBY</b></div>
-
-      <!-- ACCESS PANEL -->
-
-      <div class="access" id="accessPanel">
-
-        <div class="access-panel">
-
-          <div class="access-top">
-            <span class="access-title">AXIOM // ACCESS</span>
-            <span class="access-lock">● SECURE</span>
-          </div>
-
-          <input
-            id="operatorName"
-            type="text"
-            placeholder="Operator designation"
-            autocomplete="off"
-          >
-
-          <input
-            id="accessCode"
-            type="password"
-            placeholder="Access code"
-            autocomplete="off"
-          >
-
-          <button class="access-btn" id="accessBtn">
-            INITIALIZE SESSION →
-          </button>
-
-          <div class="access-note">
-            LOCAL COMMAND INTERFACE
-          </div>
-
+      <div class="identity-display" id="identityDisplay">
+        <div class="identity-inner">
+          <div class="axiom">AXIOM LAB OPS</div>
+          <div class="welcome">WELCOME</div>
+          <div class="operator" id="displayOperator"></div>
+          <div class="lab" id="displayLab"></div>
         </div>
-
       </div>
-
     </div>
 
     <div class="hero-side">
@@ -2052,7 +2108,7 @@ button{
 
   <div class="enter-wrap">
     <button class="enter-btn" id="enterLab">
-      ENTER LAB&nbsp;&nbsp;↗
+      INITIALIZE SYSTEM&nbsp;&nbsp;↗
     </button>
   </div>
 
@@ -3095,130 +3151,128 @@ function bootSound(){
 
 
 /* =========================================================
-   LANDING BOOT // CINEMATIC ASSEMBLY
+   REAL LAB STATE — START EMPTY
 ========================================================= */
-let booted = false;
-$("#enterLab").addEventListener("click",()=>{
-  if(booted) return;
-  booted = true;
-  bootSound();
-  const btn=$("#enterLab"), stage=$("#robotStage"), access=$("#accessPanel"), label=$("#assemblyLabel");
-  btn.textContent="INITIALIZING...";
-  stage.classList.add("assembling");
-  label.innerHTML='ASSEMBLY STATUS // <b>MODULES INBOUND</b>';
-
-  const steps=[
-    [650,"FRAME TELEMETRY"],
-    [1300,"HEAD MODULE / ALIGN"],
-    [1950,"TORSO / LOCKING"],
-    [2550,"LIMBS / SYNCHRONIZING"],
-    [3250,"MECHANICAL LOCK"],
-    [3900,"POWER CORE / CHARGING"]
+const LAB_KEY="axiom_lab_state_v6";
+let LAB={resources:[],workflows:[],crises:[],upgrades:[],personnel:[]};
+try{ const saved=JSON.parse(localStorage.getItem(LAB_KEY)||"null"); if(saved&&typeof saved==="object") LAB=Object.assign(LAB,saved); }catch(e){}
+function saveLab(){localStorage.setItem(LAB_KEY,JSON.stringify(LAB));}
+function clearSeededDashboard(){
+  const replacements=[
+    ["#overview .metric:nth-child(1) .metric-value","0<em>ACTIVE</em>"],
+    ["#overview .metric:nth-child(2) .metric-value","0<em>RUNNING</em>"],
+    ["#overview .metric:nth-child(3) .metric-value","N/A<em>%</em>"],
+    ["#overview .metric:nth-child(4) .metric-value","00<em>OPEN</em>"],
+    ["#resources .resource-number","0<small> units</small>"],
+    ["#workflows .summary-card:nth-child(1) strong","0"],
+    ["#workflows .summary-card:nth-child(2) strong","0"],
+    ["#workflows .summary-card:nth-child(3) strong","0"],
+    ["#workflows .summary-card:nth-child(4) strong","0"],
+    ["#crisis .alert-status","00 ACTIVE"]
   ];
-  steps.forEach(([time,text],i)=>setTimeout(()=>{
-    btn.textContent=text;
-    label.innerHTML='ASSEMBLY STATUS // <b>'+text+'</b>';
-    if(i===5){stage.classList.add("assembled");}
-  },time));
-
-  setTimeout(()=>{
-    btn.style.opacity="0";
-    label.innerHTML='ASSEMBLY STATUS // <b>NEURAL CORE ONLINE</b>';
-  },4700);
-  setTimeout(()=>access.classList.add("visible"),5000);
-});
+  replacements.forEach(([s,v])=>{const el=$(s);if(el)el.innerHTML=v});
+  $$("#workflows .task").forEach(x=>x.remove());
+  $$("#crisis .alert-list .alert").forEach(x=>x.remove());
+  const ring=$("#resources .resource-ring"); if(ring) ring.innerHTML="<span>0%</span>";
+  const rn=$("#resources .resource-grid .resource-card.large .resource-number"); if(rn) rn.innerHTML='0<small> utilized</small>';
+  const charts=$("#resources .bar-chart"); if(charts) charts.innerHTML="<span style='color:#647980;font:10px monospace'>NO DATA</span>";
+}
+clearSeededDashboard();
 
 /* =========================================================
-   ACCESS
+   CINEMATIC AUDIO ENGINE — MUSIC + ASSEMBLY SFX
 ========================================================= */
+let masterGain=null, musicGain=null, audioStarted=false, musicTimer=null;
+function startAudio(){
+  try{
+    audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==='suspended') audioContext.resume();
+    if(audioStarted)return; audioStarted=true; document.body.classList.add('audio-on');
+    masterGain=audioContext.createGain(); masterGain.gain.value=.32; masterGain.connect(audioContext.destination);
+    musicGain=audioContext.createGain(); musicGain.gain.value=.045; musicGain.connect(masterGain);
+    const osc=audioContext.createOscillator(), g=audioContext.createGain();
+    osc.type='sine'; osc.frequency.value=46; g.gain.value=.8; osc.connect(g); g.connect(musicGain); osc.start();
+    musicTimer=setInterval(()=>{ if(!audioContext)return; const t=audioContext.currentTime; osc.frequency.setTargetAtTime(46+Math.random()*7,t,.8); },1800);
+    sfx('boot',0);
+  }catch(e){console.log('Audio unavailable')}
+}
+function sfx(kind,delay=0){
+  if(!audioContext)return; const t=audioContext.currentTime+delay;
+  const out=audioContext.createGain(); out.gain.setValueAtTime(.0001,t); out.gain.exponentialRampToValueAtTime(.09,t+.012); out.gain.exponentialRampToValueAtTime(.0001,t+.42); out.connect(masterGain||audioContext.destination);
+  const o=audioContext.createOscillator(); o.connect(out);
+  if(kind==='lock'){o.type='square';o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(55,t+.12);o.start(t);o.stop(t+.2)}
+  else if(kind==='servo'){o.type='sawtooth';o.frequency.setValueAtTime(90,t);o.frequency.exponentialRampToValueAtTime(260,t+.32);o.start(t);o.stop(t+.35)}
+  else if(kind==='spark'){o.type='square';o.frequency.setValueAtTime(1300,t);o.frequency.exponentialRampToValueAtTime(260,t+.08);o.start(t);o.stop(t+.1)}
+  else if(kind==='core'){o.type='sine';o.frequency.setValueAtTime(60,t);o.frequency.exponentialRampToValueAtTime(520,t+.75);o.start(t);o.stop(t+.8)}
+  else if(kind==='eyes'){o.type='sine';o.frequency.setValueAtTime(420,t);o.frequency.exponentialRampToValueAtTime(900,t+.18);o.start(t);o.stop(t+.22)}
+  else {o.type='triangle';o.frequency.value=72;o.start(t);o.stop(t+.3)}
+}
+function sparks(n=10){const box=$("#sparks");if(!box)return;for(let i=0;i<n;i++){const p=document.createElement('i');p.className='spark';p.style.left=(35+Math.random()*30)+'%';p.style.top=(28+Math.random()*45)+'%';p.style.setProperty('--dx',(Math.random()*130-65)+'px');p.style.setProperty('--dy',(Math.random()*110-55)+'px');box.appendChild(p);setTimeout(()=>p.remove(),500)}}
+function setAssembly(pct,status,phase){$("#assemblyProgress").style.width=pct+'%';$("#assemblyStatus").innerHTML=status;$("#assemblyPhase").textContent=phase}
 
-$("#accessBtn").addEventListener("click",enterApplication);
+/* =========================================================
+   LANDING → ASSEMBLY → SETUP → IDENTITY → APP
+========================================================= */
+let booted=false;
+function beginAssembly(){
+  if(booted)return; booted=true; startAudio();
+  const stage=$("#robotStage"), robot=$("#robot"), btn=$("#enterLab");
+  btn.style.opacity='0'; robot.classList.add('assembly-live'); stage.classList.add('assembly');
+  const steps=[
+    [300,12,'MECHANICAL FRAME WAKE','FRAME ASSEMBLY 12%', 'servo'],
+    [900,25,'HEAD UNIT // ALIGN','HEAD ALIGNMENT 25%','servo'],
+    [1500,38,'NECK + TORSO // LOCK','TORSO LOCK 38%','lock'],
+    [2150,52,'SHOULDERS // COUPLING','SHOULDER COUPLING 52%','lock'],
+    [2800,66,'ARMS // HYDRAULIC LINK','HYDRAULIC SYSTEM 66%','servo'],
+    [3450,78,'CORE // POWER CONDUIT','POWER CONDUIT 78%','core'],
+    [4100,90,'LOWER FRAME // LOCK','LOWER FRAME 90%','lock'],
+    [4750,97,'NEURAL CORE // SYNC','NEURAL SYNC 97%','spark'],
+    [5400,100,'FRAME ASSEMBLY COMPLETE','FRAME ASSEMBLY 100%','core']
+  ];
+  steps.forEach(([ms,pct,status,phase,sound])=>setTimeout(()=>{setAssembly(pct,status,phase);sfx(sound);sparks(sound==='spark'?18:8)},ms));
+  setTimeout(()=>{
+    $(".robot-core").style.boxShadow='0 0 35px rgba(215,255,63,.8),0 0 90px rgba(215,255,63,.35)';
+    sfx('core'); sparks(24);
+  },5650);
+  setTimeout(()=>{
+    $$(".robot-eye").forEach(e=>e.style.opacity='1'); sfx('eyes');
+    setAssembly(100,'<strong>NEURAL CORE ONLINE</strong>','SYSTEM READY');
+  },6250);
+  setTimeout(()=>$("#setupPanel").classList.add('visible'),7050);
+}
+$("#enterLab").addEventListener('click',beginAssembly);
 
-$("#accessCode").addEventListener("keydown",e=>{
-  if(e.key==="Enter"){
-    enterApplication();
-  }
+$("#setupContinue").addEventListener('click',()=>{
+  const name=$("#setupOperator").value.trim(), lab=$("#setupLab").value.trim();
+  if(!name){$("#setupOperator").focus();return}
+  if(!lab){$("#setupLab").focus();return}
+  localStorage.setItem('axiom_operator',name); localStorage.setItem('axiom_lab_name',lab);
+  $("#setupPanel").classList.remove('visible');
+  $("#displayOperator").textContent=name.toUpperCase(); $("#displayLab").textContent=lab.toUpperCase();
+  setTimeout(()=>$("#identityDisplay").classList.add('visible'),450);
+  sfx('core');
+  setTimeout(()=>enterApplication(),2600);
 });
 
 function enterApplication(){
-
-  const name =
-    ($("#operatorName").value || "").trim();
-
-  localStorage.setItem(
-    "axiom_operator",
-    name || "Operator"
-  );
-
-  $("#landing").style.transition =
-    "opacity 1s cubic-bezier(.16,1,.3,1), transform 1.2s cubic-bezier(.16,1,.3,1)";
-
-  $("#landing").style.opacity = "0";
-  $("#landing").style.transform = "scale(1.04)";
-
-  setTimeout(()=>{
-
-    $("#landing").style.display = "none";
-
-    $("#app").classList.add("active");
-
-    document.body.style.overflow = "auto";
-
-    updateOperator();
-
-    initReveals();
-
-    window.scrollTo({
-      top:0,
-      behavior:"instant"
-    });
-
-  },1000);
-
+  const name=localStorage.getItem('axiom_operator')||'';
+  const lab=localStorage.getItem('axiom_lab_name')||'';
+  if(!name||!lab){$("#setupPanel").classList.add('visible');return}
+  $("#landing").style.transition='opacity 1s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)';
+  $("#landing").style.opacity='0'; $("#landing").style.transform='scale(1.04)';
+  setTimeout(()=>{ $("#landing").style.display='none'; $("#app").classList.add('active'); document.body.style.overflow='auto'; updateOperator(); initReveals(); window.scrollTo({top:0,behavior:'instant'}); },1000);
 }
-
-
-/* =========================================================
-   OPERATOR
-========================================================= */
-
 function updateOperator(){
-
-  const name =
-    localStorage.getItem("axiom_operator") || "Operator";
-
-  $("#operatorLabel").textContent =
-    name.toUpperCase();
+  const name=localStorage.getItem('axiom_operator')||'Operator';
+  $("#operatorLabel").textContent=name.toUpperCase();
+  const lab=localStorage.getItem('axiom_lab_name')||'';
+  const brand=document.querySelector('.app-brand'); if(brand&&lab) brand.setAttribute('data-lab',lab);
 }
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-$("#logoutBtn").addEventListener("click",()=>{
-
-  $("#app").classList.remove("active");
-
-  $("#landing").style.display = "flex";
-
-  requestAnimationFrame(()=>{
-    $("#landing").style.opacity = "1";
-    $("#landing").style.transform = "scale(1)";
-  });
-
-  booted = false;
-
-  $("#enterLab").style.opacity = "1";
-  $("#enterLab").textContent = "ENTER LAB ↗";
-
-  $("#accessPanel").classList.remove("visible");
-
-  window.scrollTo({
-    top:0,
-    behavior:"instant"
-  });
-
+$("#logoutBtn").addEventListener('click',()=>{
+  $("#app").classList.remove('active'); $("#landing").style.display='flex';
+  requestAnimationFrame(()=>{$("#landing").style.opacity='1';$("#landing").style.transform='scale(1)'});
+  booted=false; $("#enterLab").style.opacity='1'; $("#enterLab").textContent='INITIALIZE SYSTEM ↗'; $("#setupPanel").classList.remove('visible'); $("#identityDisplay").classList.remove('visible');
+  window.scrollTo({top:0,behavior:'instant'});
 });
 
 
@@ -3446,7 +3500,7 @@ function renderChat(){
 
     addMessageElement(
       "ai",
-      "AXIOM intelligence online.\n\nI have access to the supplied laboratory context. Ask me about resources, workflows, upgrades or incidents."
+      "AXIOM intelligence online.\n\nNo laboratory records have been configured yet. Create your lab data manually, then ask me to analyze it."
     );
 
     return;
@@ -3525,45 +3579,7 @@ function scrollChat(){
 ========================================================= */
 
 function getLabContext(){
-
-  return `
-AXIOM LAB OPS CURRENT CONTEXT
-
-Resources:
-- 48 active resources
-- 78% overall utilization
-- 2.8 TB storage footprint
-- 31 equipment units
-- 24 active personnel
-
-Workflows:
-- 48 total operations
-- 17 active
-- 6 under review
-- 25 completed
-- Protein Analysis: 72%, HIGH priority
-- Thermal Cycle: 54%, MED priority
-- Validation Run: 88%, review
-- Dataset QC: 93%, review
-
-Crisis:
-- 2 active incidents
-- Freezer temperature variance: HIGH
-- Compute queue saturation: MED
-- Calibration reminder: LOW
-
-System:
-- Core: ONLINE
-- Network: STABLE
-- AI Engine: READY
-- Efficiency: 94%
-
-Upgrades:
-- Automation
-- AI Core
-- Telemetry
-  `.trim();
-
+  return `AXIOM LAB OPS CURRENT USER DATA\nOperator: ${localStorage.getItem('axiom_operator')||'Not configured'}\nLab: ${localStorage.getItem('axiom_lab_name')||'Not configured'}\nResources created: ${LAB.resources.length}\nWorkflows created: ${LAB.workflows.length}\nCrisis incidents created: ${LAB.crises.length}\nUpgrades configured: ${LAB.upgrades.length}\nPersonnel records created: ${LAB.personnel.length}\nNo demo or seeded laboratory records are present.`;
 }
 
 
@@ -3775,3 +3791,4 @@ document.body.style.overflow = "hidden";
 
 </body>
 </html>
+
