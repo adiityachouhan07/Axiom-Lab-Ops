@@ -2271,6 +2271,31 @@ mix-blend-mode:normal;transition:none}
 @media(max-width:900px){.robot-stage{width:100%;height:560px;min-height:560px}.real-robot{inset:-70px -90px -70px}.real-part{transform-origin:center}}
 </style>
 
+
+<style id="movie-cgi-finish">
+/* MOVIE CGI FINISH — keep the robot photographic, never cartoon-like */
+.robot-stage{perspective:1800px;filter:contrast(1.06) saturate(.88)}
+.real-robot,.real-part{
+  filter:contrast(1.08) saturate(.82) brightness(.92)
+          drop-shadow(0 22px 26px rgba(0,0,0,.72));
+  transform-style:preserve-3d;
+}
+.real-robot{
+  background-size:cover!important;
+  background-position:center!important;
+  box-shadow:inset 0 0 90px rgba(0,0,0,.55);
+}
+.real-part{mix-blend-mode:normal;will-change:transform,opacity,filter}
+.robot-stage:after{content:"";position:absolute;inset:-40px;pointer-events:none;z-index:18;
+ background:radial-gradient(ellipse at 50% 48%,transparent 0 42%,rgba(0,0,0,.18) 70%,rgba(0,0,0,.72) 100%);
+}
+.real-hangar:after{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,rgba(2,7,9,.65),transparent 25%,transparent 75%,rgba(2,7,9,.65)),
+ repeating-linear-gradient(0deg,transparent 0 7px,rgba(200,230,235,.018) 8px);
+}
+@keyframes reactorBreath{0%,100%{opacity:.78;filter:brightness(.92)}50%{opacity:1;filter:brightness(1.13)}}
+.real-robot{animation:reactorBreath 3.8s ease-in-out infinite}
+</style>
 </head>
 
 <body>
@@ -4016,430 +4041,365 @@ document.body.style.overflow = "hidden";
 
 </script>
 
+<!-- MOVIE-CGI ROBOT MODE -->
 
-<!-- =========================================================
-     AXIOM LAB OPS — TRUE 3D ROBOT ASSEMBLY
-     Procedural Three.js/WebGL industrial robot
-========================================================= -->
 <style>
-  .robot-stage{isolation:isolate}
-  .real-hangar,.real-parts,.real-robot{display:none!important}
-  #axiom3DCanvas{
-    position:absolute;inset:0;width:100%;height:100%;
-    z-index:7;pointer-events:none;
-    opacity:0;transition:opacity 1s ease;
-  }
-  #axiom3DCanvas.live{opacity:1}
-  .assembly-hud{z-index:12!important}
-  .setup-panel{z-index:20!important}
-  .identity-display{z-index:21!important}
-  .three-cinematic-vignette{
-    position:absolute;inset:0;z-index:8;pointer-events:none;
-    background:
-      radial-gradient(ellipse at 50% 47%,transparent 0 35%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
-      linear-gradient(180deg,rgba(0,0,0,.34),transparent 25%,transparent 72%,rgba(0,0,0,.62));
-    mix-blend-mode:multiply;
-  }
-  .three-scanline{
-    position:absolute;inset:0;z-index:9;pointer-events:none;opacity:.13;
-    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(170,230,255,.11) 4px,transparent 5px);
-  }
-  @media(max-width:700px){
-    #axiom3DCanvas{min-height:560px}
-  }
+/* Premium cinematic gold accents layered over the 3D stage */
+.robot-stage::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:10;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(255,200,65,.045),transparent 24%),
+    linear-gradient(115deg,transparent 0 39%,rgba(255,198,70,.025) 50%,transparent 61%);
+}
 </style>
-<script type="module">
-(async()=>{
-  if(window.__AXIOM_TRUE_3D__) return;
-  window.__AXIOM_TRUE_3D__=true;
 
-  const stage=document.getElementById('robotStage');
-  if(!stage) return;
-
-  const canvas=document.createElement('canvas');
-  canvas.id='axiom3DCanvas';
-  stage.appendChild(canvas);
-
-  const vignette=document.createElement('div');
-  vignette.className='three-cinematic-vignette';
-  stage.appendChild(vignette);
-
-  const scan=document.createElement('div');
-  scan.className='three-scanline';
-  stage.appendChild(scan);
-
-  let THREE;
-  try{
-    THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-  }catch(err){
-    console.warn('Three.js unavailable; preserving baseline cinematic assembly.',err);
-    return;
-  }
-
-  const {
-    Scene,PerspectiveCamera,WebGLRenderer,Group,Mesh,MeshStandardMaterial,
-    MeshPhysicalMaterial,BoxGeometry,CylinderGeometry,SphereGeometry,
-    TorusGeometry,PlaneGeometry,AmbientLight,DirectionalLight,PointLight,
-    SpotLight,Vector3,Color,MathUtils,AdditiveBlending,DoubleSide
-  }=THREE;
-
-  const renderer=new WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.05;
-
-  const scene=new Scene();
-  scene.background=new Color(0x010407);
-  scene.fog=new THREE.FogExp2(0x010407,0.055);
-
-  const camera=new PerspectiveCamera(34,1,.1,100);
-  camera.position.set(0,2.1,13.8);
-  camera.lookAt(0,2.7,0);
-
-  const ambient=new AmbientLight(0x9bb4bd,.42);
-  scene.add(ambient);
-
-  const key=new SpotLight(0xb9e9ff,1200,28,Math.PI/5,.55,1.7);
-  key.position.set(-5,9,8); key.castShadow=true; key.shadow.mapSize.set(1024,1024);
-  scene.add(key); scene.add(key.target); key.target.position.set(0,3,0);
-
-  const rim=new PointLight(0x35b9ff,80,15);
-  rim.position.set(4,5,-1); scene.add(rim);
-
-  const amber=new PointLight(0xff9b3d,35,10);
-  amber.position.set(-4,2,4); scene.add(amber);
-
-  const floorMat=new MeshStandardMaterial({color:0x080e11,metalness:.9,roughness:.32});
-  const floor=new Mesh(new PlaneGeometry(34,26),floorMat);
-  floor.rotation.x=-Math.PI/2; floor.position.y=-.15; floor.receiveShadow=true;
-  scene.add(floor);
-
-  // Hangar lines / guide rails.
-  const railMat=new MeshStandardMaterial({color:0x18252a,metalness:.85,roughness:.25});
-  for(let x=-8;x<=8;x+=2){
-    const rail=new Mesh(new BoxGeometry(.025,.012,22),railMat);
-    rail.position.set(x,-.135,0); scene.add(rail);
-  }
-  for(let z=-9;z<=9;z+=2){
-    const rail=new Mesh(new BoxGeometry(18,.012,.025),railMat);
-    rail.position.set(0,-.13,z); scene.add(rail);
-  }
-
-  const robot=new Group();
-  robot.position.y=.25;
-  scene.add(robot);
-
-  const assemblyParts=[];
-  const metal=new MeshPhysicalMaterial({
-    color:0x555f62,metalness:.94,roughness:.27,clearcoat:.32,clearcoatRoughness:.18
-  });
-  const darkMetal=new MeshPhysicalMaterial({
-    color:0x101619,metalness:.98,roughness:.22,clearcoat:.3
-  });
-  const silver=new MeshPhysicalMaterial({
-    color:0x9aa5a6,metalness:.97,roughness:.2,clearcoat:.42
-  });
-  const black=new MeshStandardMaterial({color:0x05090b,metalness:.95,roughness:.2});
-  const cyan=new MeshStandardMaterial({
-    color:0x77eaff,emissive:0x36cfff,emissiveIntensity:4,
-    metalness:.3,roughness:.18
-  });
-  const lime=new MeshStandardMaterial({
-    color:0xd7ff3f,emissive:0x8ab51f,emissiveIntensity:5,
-    metalness:.25,roughness:.16
-  });
-
-  function matClone(m){return m.clone()}
-  function addBox(g,size,pos,mat=metal,rot=[0,0,0],bevel=false){
-    const geo=new BoxGeometry(size[0],size[1],size[2],bevel?2:1,bevel?2:1,bevel?2:1);
-    const m=new Mesh(geo,matClone(mat));
-    m.position.set(...pos);m.rotation.set(...rot);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;
-  }
-  function addCyl(g,r1,r2,h,pos,mat=metal,rot=[0,0,0],radial=16){
-    const m=new Mesh(new CylinderGeometry(r1,r2,h,radial),matClone(mat));
-    m.position.set(...pos);m.rotation.set(...rot);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;
-  }
-  function addSphere(g,r,pos,mat=metal){
-    const m=new Mesh(new SphereGeometry(r,20,14),matClone(mat));
-    m.position.set(...pos);m.castShadow=true;g.add(m);return m;
-  }
-
-  function part(name){
-    const g=new Group();g.name=name;robot.add(g);
-    assemblyParts.push({g,name,home:g.position.clone(),homeQ:g.quaternion.clone(),ready:false});
-    return g;
-  }
-
-  // HEAD
-  const head=part('HEAD ASSEMBLY');
-  addBox(head,[1.55,.82,1.18],[0,6.05,0],darkMetal,[0,.02,0],true);
-  addBox(head,[1.25,.25,.12],[0,6.05,.61],black,[0,0,0]);
-  addBox(head,[.92,.08,.07],[0,6.08,.68],cyan);
-  addBox(head,[.28,.18,.86],[-.83,6.05,0],metal,[0,0,.08]);
-  addBox(head,[.28,.18,.86],[.83,6.05,0],metal,[0,0,-.08]);
-  addCyl(head,.14,.14,.9,[0,5.58,0],silver,[Math.PI/2,0,0]);
-  addBox(head,[.42,.25,.65],[0,6.42,0],silver,[0,0,0],true);
-
-  // NECK
-  const neck=part('NECK / HYDRAULIC COUPLER');
-  addCyl(neck,.42,.36,.52,[0,5.45,0],darkMetal);
-  addCyl(neck,.23,.23,.65,[-.46,5.42,0],silver,[0,0,Math.PI/2]);
-  addCyl(neck,.23,.23,.65,[.46,5.42,0],silver,[0,0,Math.PI/2]);
-  for(let i=-1;i<=1;i++) addCyl(neck,.06,.06,.72,[i*.22,5.45,.12],black,[0,0,0],10);
-
-  // TORSO / REACTOR
-  const torso=part('TORSO FRAME');
-  addBox(torso,[3.15,2.45,1.25],[0,4.25,0],darkMetal,[0,0,0],true);
-  addBox(torso,[2.55,1.75,1.34],[0,4.38,.08],metal,[0,0,0],true);
-  addBox(torso,[1.65,.72,.18],[0,5.02,.72],silver,[0,0,0],true);
-  addBox(torso,[1.85,.62,.16],[0,3.35,.7],black);
-  addBox(torso,[.18,1.5,.14],[-1.45,4.25,.7],silver);
-  addBox(torso,[.18,1.5,.14],[1.45,4.25,.7],silver);
-
-  const reactor=part('NEURAL REACTOR');
-  addCyl(reactor,.62,.62,.24,[0,4.35,.78],black,[Math.PI/2,0,0],32);
-  addCyl(reactor,.43,.43,.27,[0,4.35,.92],cyan,[Math.PI/2,0,0],32);
-  addCyl(reactor,.27,.27,.29,[0,4.35,1.08],lime,[Math.PI/2,0,0],24);
-  const reactorRing=new Mesh(new TorusGeometry(.67,.035,10,48),new MeshStandardMaterial({
-    color:0x77eaff,emissive:0x27bfff,emissiveIntensity:4,metalness:.5,roughness:.2
-  }));
-  reactorRing.position.set(0,4.35,1.1);reactorRing.rotation.x=Math.PI/2;reactor.add(reactorRing);
-
-  // SHOULDERS
-  const shoulderL=part('LEFT SHOULDER');
-  const shoulderR=part('RIGHT SHOULDER');
-  for(const [g,s] of [[shoulderL,-1],[shoulderR,1]]){
-    addSphere(g,.72,[s*2.0,5.0,0],metal);
-    addBox(g,[.72,.95,1.3],[s*2.15,4.85,0],silver,[0,0,s*.18],true);
-    addBox(g,[.42,.7,.9],[s*2.45,4.85,0],darkMetal,[0,0,s*.18],true);
-  }
-
-  function makeArm(side){
-    const g=part(side<0?'LEFT ARM':'RIGHT ARM');
-    const x=side*2.55;
-    addCyl(g,.48,.38,1.65,[x,3.95,0],metal,[0,0,Math.PI/2]);
-    addBox(g,[.55,1.6,.72],[x,3.75,0],darkMetal,[0,0,side*.12],true);
-    addCyl(g,.38,.33,1.25,[x,2.72,0],silver,[0,0,Math.PI/2]);
-    addBox(g,[.65,.9,.65],[x,2.0,0],metal,[0,0,side*.08],true);
-    addCyl(g,.3,.3,.75,[x,1.55,0],black,[0,0,Math.PI/2]);
-    addBox(g,[.5,.7,.7],[x,1.1,0],darkMetal,[0,0,side*.1],true);
-    return g;
-  }
-  const armL=makeArm(-1),armR=makeArm(1);
-
-  // HIPS + LEGS
-  const hip=part('HIP FRAME');
-  addBox(hip,[2.55,.9,1.15],[0,2.75,0],metal,[0,0,0],true);
-  addCyl(hip,.42,.42,.8,[-.72,2.38,0],silver,[Math.PI/2,0,0]);
-  addCyl(hip,.42,.42,.8,[.72,2.38,0],silver,[Math.PI/2,0,0]);
-
-  function makeLeg(side){
-    const g=part(side<0?'LEFT LEG':'RIGHT LEG'),x=side*.78;
-    addBox(g,[.98,2.45,1.12],[x,1.2,0],darkMetal,[0,0,side*.04],true);
-    addBox(g,[.72,1.8,1.2],[x,.55,.03],metal,[0,0,side*.03],true);
-    addCyl(g,.33,.33,.85,[x,-.35,0],silver,[Math.PI/2,0,0]);
-    addBox(g,[1.25,.48,1.85],[x,-.75,.28],darkMetal,[0,0,side*.04],true);
-    addBox(g,[1.05,.24,1.45],[x,-.55,.98],silver,[0,0,side*.04],true);
-    return g;
-  }
-  const legL=makeLeg(-1),legR=makeLeg(1);
-
-  // FLOOR LOCK FEET
-  const footL=part('LEFT FOOT');
-  const footR=part('RIGHT FOOT');
-  for(const [g,s] of [[footL,-1],[footR,1]]){
-    addBox(g,[1.45,.48,2.25],[s*.78,-1.05,.35],darkMetal,[0,0,s*.04],true);
-    addBox(g,[1.22,.22,1.65],[s*.78,-.86,1.0],silver,[0,0,s*.04],true);
-  }
-
-  // Hydraulic rods / cables as thin cylinders.
-  function rod(a,b,r=.055,mat=silver){
-    const va=new Vector3(...a),vb=new Vector3(...b),mid=va.clone().add(vb).multiplyScalar(.5);
-    const d=vb.clone().sub(va),len=d.length();
-    const m=new Mesh(new CylinderGeometry(r,r,len,10),matClone(mat));
-    m.position.copy(mid);m.quaternion.setFromUnitVectors(new Vector3(0,1,0),d.normalize());
-    m.castShadow=true;robot.add(m);
-    return m;
-  }
-  rod([-1.72,4.72,.42],[-2.35,3.35,.42],.07);
-  rod([1.72,4.72,.42],[2.35,3.35,.42],.07);
-  rod([-.48,2.45,.38],[-.78,.35,.38],.075);
-  rod([.48,2.45,.38],[.78,.35,.38],.075);
-
-  // Back-mounted spine plates.
-  for(let i=0;i<5;i++){
-    addBox(robot,[1.55-.12*i,.22,.28],[0,5.0-i*.55,-.65],silver,[0,0,0],true);
-  }
-
-  // Initial assembly positions: parts fly in from different vectors.
-  const specs={
-    'HEAD ASSEMBLY':[-5,6.8,5.5],
-    'NECK / HYDRAULIC COUPLER':[4,7,-4],
-    'TORSO FRAME':[0,-2.8,6],
-    'NEURAL REACTOR':[-4,3,7],
-    'LEFT SHOULDER':[-6,5,-2],
-    'RIGHT SHOULDER':[6,5,-2],
-    'LEFT ARM':[-7,1,2],
-    'RIGHT ARM':[7,1,2],
-    'HIP FRAME':[3,-2,-4],
-    'LEFT LEG':[-4,-4,4],
-    'RIGHT LEG':[4,-4,4],
-    'LEFT FOOT':[-6,-5,-3],
-    'RIGHT FOOT':[6,-5,-3]
-  };
-  assemblyParts.forEach((p,i)=>{
-    const s=specs[p.name]||[0,0,0];
-    p.g.userData.home=p.g.position.clone();
-    p.g.position.set(s[0],s[1],s[2]);
-    p.g.rotation.set((i%2?-.4:.35),i%3*.4,(i%2?.55:-.55));
-    p.g.scale.setScalar(.88);
-  });
-
-  // Sparks.
-  const sparkGroup=new Group();scene.add(sparkGroup);
-  const sparkGeo=new SphereGeometry(.035,6,6);
-  function burst(x,y,z,count=28){
-    for(let i=0;i<count;i++){
-      const m=new Mesh(sparkGeo,lime);
-      m.position.set(x,y,z);
-      m.userData.v=new Vector3((Math.random()-.5)*.12,(Math.random()-.2)*.16,(Math.random()-.5)*.12);
-      m.userData.life=1;
-      sparkGroup.add(m);
-    }
-  }
-
-  function resize(){
-    const r=stage.getBoundingClientRect();
-    const w=Math.max(320,r.width),h=Math.max(560,r.height);
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-  }
-  addEventListener('resize',resize);resize();
-
-  // Pointer-driven camera/parallax.
-  let px=0,py=0,targetPX=0,targetPY=0;
-  stage.addEventListener('pointermove',e=>{
-    const r=stage.getBoundingClientRect();
-    targetPX=((e.clientX-r.left)/r.width-.5);
-    targetPY=((e.clientY-r.top)/r.height-.5);
-  },{passive:true});
-  stage.addEventListener('pointerleave',()=>{targetPX=0;targetPY=0},{passive:true});
-
-  let clock=0,assemblyStarted=false,ready=false;
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function setHud(pct,status,phase){
-    const a=document.getElementById('assemblyProgress'),b=document.getElementById('assemblyStatus'),c=document.getElementById('assemblyPhase');
-    if(a)a.style.width=pct+'%'; if(b)b.innerHTML=status;if(c)c.textContent=phase;
-  }
-
-  function pulse(partName,duration=900){
-    const p=assemblyParts.find(x=>x.name===partName);if(!p)return;
-    p.g.scale.setScalar(1.08);
-    setTimeout(()=>p.g.scale.setScalar(1),duration);
-  }
-
-  function flyPart(name,pct,status,phase,delay){
-    setTimeout(()=>{
-      const p=assemblyParts.find(x=>x.name===name);if(!p)return;
-      p.g.position.copy(p.g.userData.home);
-      p.g.rotation.set(0,0,0);
-      p.g.scale.setScalar(1);
-      pulse(name);
-      setHud(pct,'<strong>'+status+'</strong>',phase);
-      burst(p.g.position.x,p.g.position.y,p.g.position.z,18);
-    },delay);
-  }
-
-  // Replace the old button handler so only the WebGL assembly drives the sequence.
-  const oldBtn=document.getElementById('enterLab');
-  if(oldBtn){
-    const fresh=oldBtn.cloneNode(true);
-    oldBtn.replaceWith(fresh);
-    fresh.addEventListener('click',()=>{
-      if(assemblyStarted)return;
-      assemblyStarted=true;
-      fresh.style.opacity='0';
-      canvas.classList.add('live');
-      if(window.startAudio) try{window.startAudio()}catch(e){}
-      const sequence=[
-        ['TORSO FRAME',8,'TORSO FRAME // INBOUND','STRUCTURAL CORE 8%',300],
-        ['NECK / HYDRAULIC COUPLER',16,'NECK COUPLER // ALIGN','FRAME ASSEMBLY 16%',1250],
-        ['LEFT SHOULDER',25,'LEFT SHOULDER // MAG-LOCK','FRAME ASSEMBLY 25%',2200],
-        ['RIGHT SHOULDER',34,'RIGHT SHOULDER // MAG-LOCK','FRAME ASSEMBLY 34%',2850],
-        ['LEFT ARM',43,'LEFT ARM // HYDRAULIC LINK','FRAME ASSEMBLY 43%',3550],
-        ['RIGHT ARM',52,'RIGHT ARM // HYDRAULIC LINK','FRAME ASSEMBLY 52%',4050],
-        ['NEURAL REACTOR',64,'NEURAL CORE // INSERT','REACTOR CHAMBER 64%',4800],
-        ['HIP FRAME',72,'HIP FRAME // COUPLE','STRUCTURAL LOCK 72%',5850],
-        ['LEFT LEG',82,'LEFT LEG // DEPLOY','LOWER FRAME 82%',6650],
-        ['RIGHT LEG',90,'RIGHT LEG // DEPLOY','LOWER FRAME 90%',7250],
-        ['LEFT FOOT',95,'LEFT GROUND LOCK // CLAMP','GROUND LOCK 95%',8000],
-        ['RIGHT FOOT',98,'RIGHT GROUND LOCK // CLAMP','GROUND LOCK 98%',8500],
-        ['HEAD ASSEMBLY',100,'HEAD UNIT // FINAL LOCK','FRAME ASSEMBLY 100%',9250]
-      ];
-      sequence.forEach(x=>flyPart(...x));
-
-      setTimeout(()=>{
-        setHud(100,'<strong>FRAME ASSEMBLY 100%</strong>','STRUCTURAL LOCK COMPLETE');
-        burst(0,4.3,1.1,55);
-        if(window.sfx)try{window.sfx('lock')}catch(e){}
-      },10100);
-
-      setTimeout(()=>{
-        setHud(100,'<strong>REACTOR IGNITION</strong>','NEURAL CORE CHARGING');
-        burst(0,4.35,1.15,80);
-        if(window.sfx)try{window.sfx('core')}catch(e){}
-      },11000);
-
-      setTimeout(()=>{
-        ready=true;
-        setHud(100,'<strong>NEURAL CORE ONLINE</strong>','SYSTEM READY');
-        if(window.sfx)try{window.sfx('eyes')}catch(e){}
-        document.querySelectorAll('.setup-panel').forEach(x=>x.classList.add('visible'));
-      },12300);
-    });
-  }
-
-  // Camera + animation loop.
-  function animate(){
-    requestAnimationFrame(animate);
-    const dt=.016;clock+=dt;
-    px=MathUtils.lerp(px,targetPX,.045);py=MathUtils.lerp(py,targetPY,.045);
-
-    camera.position.x=MathUtils.lerp(camera.position.x,px*1.15,.025);
-    camera.position.y=MathUtils.lerp(camera.position.y,2.1-py*.55,.025);
-    camera.position.z=MathUtils.lerp(camera.position.z,13.8,.025);
-    camera.lookAt(0,2.75,0);
-
-    if(assemblyStarted && !ready){
-      robot.rotation.y=Math.sin(clock*.34)*.035+px*.08;
-      robot.rotation.x=py*.025;
-    }else if(ready){
-      robot.rotation.y=Math.sin(clock*.22)*.055+px*.1;
-      robot.rotation.x=py*.035;
-      const s=1+Math.sin(clock*1.5)*.008;
-      robot.scale.set(s,s,s);
-    }
-
-    reactorRing.rotation.z+=.012;
-    cyan.emissiveIntensity=3.4+Math.sin(clock*3)*.8;
-    lime.emissiveIntensity=4.4+Math.sin(clock*4.5)*1.1;
-
-    for(let i=sparkGroup.children.length-1;i>=0;i--){
-      const s=sparkGroup.children[i];
-      s.position.add(s.userData.v);
-      s.userData.v.y-=.0038;
-      s.userData.life-=.025;
-      s.scale.setScalar(Math.max(.01,s.userData.life));
-      if(s.userData.life<=0)sparkGroup.remove(s);
-    }
-    renderer.render(scene,camera);
-  }
-  animate();
+<style id="axiom-multicolor-robot">
+/* AXIOM — cinematic multi-metal palette */
+</style>
+<script>
+(function(){
+  // The underlying 3D scene uses material names/variables; this patch changes
+  // the material palette at runtime without altering the dashboard.
+  const original = window.__AXIOM_TRUE_3D_MATERIAL_PATCH__;
+  if(original) return;
+  window.__AXIOM_TRUE_3D_MATERIAL_PATCH__ = true;
 })();
 </script>
 
+
+<script>
+/* =========================================================
+   AXIOM CINEMATIC AUDIO — procedural, distinct event SFX
+   No external audio files required.
+========================================================= */
+(function(){
+  if(window.__AXIOM_CINEMA_AUDIO__) return;
+  window.__AXIOM_CINEMA_AUDIO__=true;
+
+  let AC=null, master=null, musicBus=null, sfxBus=null, musicTimer=null;
+  let started=false;
+
+  function audio(){
+    if(!AC){
+      AC=new (window.AudioContext||window.webkitAudioContext)();
+      master=AC.createGain(); master.gain.value=.72; master.connect(AC.destination);
+      musicBus=AC.createGain(); musicBus.gain.value=.18; musicBus.connect(master);
+      sfxBus=AC.createGain(); sfxBus.gain.value=.9; sfxBus.connect(master);
+    }
+    if(AC.state==='suspended') AC.resume();
+    return AC;
+  }
+
+  function tone(freq,dur,type='sine',gain=.12,when=0,detune=0){
+    const a=audio(),o=a.createOscillator(),g=a.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,a.currentTime+when);o.detune.value=detune;
+    g.gain.setValueAtTime(.0001,a.currentTime+when);
+    g.gain.exponentialRampToValueAtTime(gain,a.currentTime+when+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+when+dur);
+    o.connect(g);g.connect(sfxBus);o.start(a.currentTime+when);o.stop(a.currentTime+when+dur+.03);
+  }
+
+  function noise(dur=.3,gain=.08,filter=1800,when=0){
+    const a=audio(),n=a.createBufferSource(),b=a.createBuffer(1,a.sampleRate*dur,a.sampleRate);
+    const data=b.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,.7);
+    n.buffer=b;
+    const f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=filter;f.Q.value=.7;
+    g.gain.setValueAtTime(gain,a.currentTime+when);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+when+dur);
+    n.connect(f);f.connect(g);g.connect(sfxBus);n.start(a.currentTime+when);
+  }
+
+  function thump(){
+    tone(72,.55,'sine',.34); tone(38,.8,'sine',.26,.015);
+    noise(.28,.22,260,.02);
+  }
+
+  function servo(){
+    tone(140,.18,'sawtooth',.09);
+    tone(210,.22,'square',.045,.06);
+    tone(285,.15,'sawtooth',.055,.13);
+  }
+
+  function magnetic(){
+    tone(720,.12,'sine',.08);
+    tone(1040,.16,'sine',.11,.07);
+    tone(1480,.2,'sine',.08,.14);
+    noise(.09,.08,4200,.12);
+  }
+
+  function metallicLock(){
+    thump();
+    tone(185,.18,'triangle',.18,.04);
+    tone(92,.42,'triangle',.14,.08);
+    noise(.16,.12,3200,.02);
+  }
+
+  function electrical(){
+    noise(.38,.15,5200);
+    tone(1900,.16,'sawtooth',.08,.02);
+    tone(3100,.11,'square',.05,.1);
+    tone(4200,.08,'sine',.04,.18);
+  }
+
+  function coreIgnition(){
+    const a=audio();
+    tone(48,1.25,'sine',.34);
+    tone(96,1.0,'sine',.18,.08);
+    tone(220,.7,'triangle',.11,.3);
+    tone(440,.55,'sine',.08,.52);
+    tone(880,.4,'sine',.06,.72);
+    noise(.55,.09,900,.18);
+  }
+
+  function eyeBoot(){
+    tone(900,.16,'sine',.08);
+    tone(1350,.2,'sine',.1,.12);
+    tone(1800,.28,'sine',.08,.25);
+  }
+
+  function finalHit(){
+    thump();
+    tone(55,.95,'sine',.38,.02);
+    noise(.42,.16,1400,.04);
+    tone(330,.65,'triangle',.11,.08);
+  }
+
+  // Cinematic underscore: evolving low drone + sparse pulses, deliberately
+  // different from every assembly SFX.
+  function startMusic(){
+    const a=audio();
+    if(musicTimer) return;
+    let step=0;
+    const notes=[55,61.74,65.41,73.42,82.41,73.42,65.41,61.74];
+    musicTimer=setInterval(()=>{
+      if(!AC) return;
+      const f=notes[step++%notes.length];
+      const o=a.createOscillator(),g=a.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,a.currentTime);
+      g.gain.exponentialRampToValueAtTime(.055,a.currentTime+.4);
+      g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+2.7);
+      o.connect(g);g.connect(musicBus);o.start();o.stop(a.currentTime+2.8);
+    },2600);
+  }
+
+  window.startAudio=function(){
+    audio(); started=true; startMusic();
+  };
+
+  window.sfx=function(kind){
+    if(!started) return;
+    switch(kind){
+      case 'lock': metallicLock(); magnetic(); break;
+      case 'core': coreIgnition(); break;
+      case 'eyes': eyeBoot(); break;
+      case 'servo': servo(); break;
+      case 'magnetic': magnetic(); break;
+      case 'electric': electrical(); break;
+      case 'hit': finalHit(); break;
+      default: servo();
+    }
+  };
+
+  // Give the assembly sequence unique audio events based on each component.
+  const originalSfx=window.sfx;
+  let hooked=false;
+  function hook(){
+    if(hooked) return; hooked=true;
+    const btn=document.getElementById('enterLab');
+    if(!btn) return;
+    btn.addEventListener('click',()=>{
+      setTimeout(()=>sfx('servo'),350);
+      setTimeout(()=>sfx('magnetic'),1250);
+      setTimeout(()=>sfx('servo'),2200);
+      setTimeout(()=>sfx('magnetic'),2850);
+      setTimeout(()=>sfx('electric'),3550);
+      setTimeout(()=>sfx('servo'),4050);
+      setTimeout(()=>sfx('electric'),4800);
+      setTimeout(()=>sfx('lock'),5850);
+      setTimeout(()=>sfx('servo'),6650);
+      setTimeout(()=>sfx('magnetic'),7250);
+      setTimeout(()=>sfx('lock'),8000);
+      setTimeout(()=>sfx('lock'),8500);
+      setTimeout(()=>sfx('hit'),9250);
+      setTimeout(()=>sfx('lock'),10100);
+      setTimeout(()=>sfx('core'),11000);
+      setTimeout(()=>sfx('eyes'),12300);
+    },{once:true});
+  }
+  setTimeout(hook,500);
+})();
+</script>
+
+
+<style id="axiom-robot-v2">
+/* ===== MOVIE-CGI 2D/2.5D FINISH ===== */
+.robot-stage{
+  perspective:1400px!important;
+  background:
+    radial-gradient(ellipse at 50% 43%,rgba(255,196,62,.11),transparent 22%),
+    radial-gradient(ellipse at 50% 58%,rgba(35,210,255,.12),transparent 36%),
+    linear-gradient(180deg,#020508 0%,#071015 58%,#020406 100%)!important;
+}
+.robot-stage:before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
+  background:
+    linear-gradient(90deg,rgba(255,30,30,.055),transparent 22%,transparent 78%,rgba(255,195,45,.045)),
+    radial-gradient(ellipse at 50% 52%,transparent 0 36%,rgba(0,0,0,.18) 68%,rgba(0,0,0,.78) 100%);
+}
+#axiom3DCanvas{filter:contrast(1.12) saturate(1.08) brightness(.94);}
+
+/* cinematic edge-light / floor bounce */
+.robot-stage:after{
+  content:"";position:absolute;left:15%;right:15%;bottom:7%;height:19%;
+  pointer-events:none;z-index:11;
+  background:radial-gradient(ellipse,rgba(35,210,255,.18),rgba(255,177,35,.07) 38%,transparent 72%);
+  filter:blur(22px);mix-blend-mode:screen;
+}
+</style>
+
+<script>
+/* ===== AUDIO V2: deeper mechanical transients + evolving cinematic score ===== */
+(()=> {
+  if(window.__AXIOM_AUDIO_V2__) return;
+  window.__AXIOM_AUDIO_V2__=true;
+  let C=null, master=null, sfxBus=null, musicBus=null, musicTimer=null, started=false;
+
+  function init(){
+    if(!C){
+      C=new (window.AudioContext||window.webkitAudioContext)();
+      master=C.createGain();master.gain.value=.72;master.connect(C.destination);
+      sfxBus=C.createGain();sfxBus.gain.value=.95;sfxBus.connect(master);
+      musicBus=C.createGain();musicBus.gain.value=.22;musicBus.connect(master);
+    }
+    if(C.state==='suspended')C.resume();
+  }
+  function osc(f,d,type,g,delay=0,endF=null){
+    init();const o=C.createOscillator(),a=C.createGain(),t=C.currentTime+delay;
+    o.type=type;o.frequency.setValueAtTime(f,t);
+    if(endF)o.frequency.exponentialRampToValueAtTime(endF,t+d);
+    a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(g,t+.015);
+    a.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(a);a.connect(sfxBus);o.start(t);o.stop(t+d+.03);
+  }
+  function burstNoise(d,g,cut,delay=0){
+    init();const b=C.createBuffer(1,C.sampleRate*d,C.sampleRate),x=b.getChannelData(0);
+    for(let i=0;i<x.length;i++)x[i]=(Math.random()*2-1)*(1-i/x.length)**.55;
+    const n=C.createBufferSource(),f=C.createBiquadFilter(),a=C.createGain(),t=C.currentTime+delay;
+    n.buffer=b;f.type='lowpass';f.frequency.value=cut;a.gain.setValueAtTime(g,t);
+    a.gain.exponentialRampToValueAtTime(.0001,t+d);n.connect(f);f.connect(a);a.connect(sfxBus);n.start(t);
+  }
+  function impact(){
+    osc(62,.72,'sine',.42,0,31);osc(118,.36,'triangle',.2,.015,55);
+    burstNoise(.3,.25,700,.01);
+  }
+  function hydraulic(){
+    osc(105,.45,'sawtooth',.08,0,220);
+    osc(220,.28,'square',.045,.12,95);
+    burstNoise(.18,.09,1700,.03);
+  }
+  function magnet(){
+    osc(620,.11,'sine',.1);osc(980,.15,'sine',.11,.07);osc(1420,.2,'sine',.07,.14);
+    burstNoise(.08,.06,5000,.12);
+  }
+  function lock(){
+    impact();osc(240,.16,'triangle',.13,.04,105);burstNoise(.13,.14,3500,.02);
+  }
+  function arc(){
+    burstNoise(.42,.19,5200);osc(1750,.15,'sawtooth',.07,.02,3800);
+    osc(2950,.1,'square',.055,.1,1500);
+  }
+  function reactor(){
+    osc(40,1.45,'sine',.42,0,28);
+    osc(82,1.15,'sine',.22,.08,160);
+    osc(330,.7,'triangle',.11,.3,660);
+    osc(660,.5,'sine',.075,.62,1320);
+    burstNoise(.6,.1,1100,.18);
+  }
+  function eyes(){
+    osc(760,.13,'sine',.09);osc(1120,.18,'sine',.1,.1);osc(1880,.3,'sine',.075,.23);
+  }
+  function finalHit(){
+    impact();osc(49,1.05,'sine',.48,.02,24);burstNoise(.5,.19,1500,.04);
+    osc(330,.75,'triangle',.12,.08,165);
+  }
+
+  function score(){
+    init(); if(musicTimer) return;
+    let k=0;
+    const roots=[55,55,65.41,61.74,73.42,65.41,55,82.41];
+    const pad=[110,123.47,130.81,146.83,164.81,146.83,130.81,123.47];
+    musicTimer=setInterval(()=>{
+      const t=C.currentTime, r=roots[k%roots.length], p=pad[k%pad.length]; k++;
+      // Low reactor-like pulse
+      const b=C.createOscillator(),ba=C.createGain();
+      b.type='sine'; b.frequency.setValueAtTime(r,t);
+      ba.gain.setValueAtTime(.0001,t);
+      ba.gain.exponentialRampToValueAtTime(.052,t+.18);
+      ba.gain.exponentialRampToValueAtTime(.0001,t+2.15);
+      b.connect(ba);ba.connect(musicBus);b.start(t);b.stop(t+2.2);
+
+      // Slow synth pad for continuity
+      const o=C.createOscillator(),a=C.createGain(),f=C.createBiquadFilter();
+      o.type='triangle';o.frequency.setValueAtTime(p,t);
+      f.type='lowpass';f.frequency.setValueAtTime(900,t);
+      a.gain.setValueAtTime(.0001,t);
+      a.gain.exponentialRampToValueAtTime(.018,t+.5);
+      a.gain.exponentialRampToValueAtTime(.0001,t+2.5);
+      o.connect(f);f.connect(a);a.connect(musicBus);o.start(t);o.stop(t+2.55);
+
+      // Occasional metallic high shimmer, so it doesn't sound like one loop
+      if(k%3===0){
+        const q=C.createOscillator(),qa=C.createGain();
+        q.type='sine';q.frequency.setValueAtTime(p*4,t);
+        qa.gain.setValueAtTime(.0001,t);
+        qa.gain.exponentialRampToValueAtTime(.006,t+.2);
+        qa.gain.exponentialRampToValueAtTime(.0001,t+1.3);
+        q.connect(qa);qa.connect(musicBus);q.start(t);q.stop(t+1.35);
+      }
+    },2200);
+  }
+
+  window.startAudioV2=()=>{init();started=true;score()};
+  window.sfxV2=(x)=>{
+    if(!started)return;
+    ({hydraulic,magnet,lock,arc,reactor,eyes,hit:finalHit,impact}[x]||hydraulic)();
+  };
+
+  // Start V2 audio alongside the existing sequence; it uses different sounds,
+  // so repeated identical cues are avoided.
+  const b=document.getElementById('enterLab');
+  if(b)b.addEventListener('click',()=>{
+    window.startAudioV2();
+    const events=[
+      [450,'hydraulic'],[1300,'magnet'],[2250,'lock'],[2920,'magnet'],
+      [3600,'hydraulic'],[4120,'arc'],[4880,'arc'],[5900,'lock'],
+      [6720,'hydraulic'],[7300,'magnet'],[8060,'lock'],[8560,'lock'],
+      [9320,'hit'],[10200,'lock'],[11100,'reactor'],[12400,'eyes']
+    ];
+    events.forEach(([t,x])=>setTimeout(()=>window.sfxV2(x),t));
+  },{once:true});
+})();
+</script>
+
+
+<script>
+/* Keep cinematic audio alive through the whole intro and application.
+   Only explicit page exit/logout fades it down. */
+(()=> {
+  const fadeOut=()=>{
+    try{
+      const C=window.__AXIOM_AUDIO_CONTEXT__;
+      if(C && window.__AXIOM_MASTER_GAIN__){
+        const g=window.__AXIOM_MASTER_GAIN__,t=C.currentTime;
+        g.gain.cancelScheduledValues(t);
+        g.gain.setValueAtTime(g.gain.value,t);
+        g.gain.linearRampToValueAtTime(.0001,t+1.2);
+      }
+    }catch(e){}
+  };
+  window.addEventListener('beforeunload',fadeOut);
+})();
+</script>
 </body>
 </html>
