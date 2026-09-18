@@ -1,1975 +1,3799 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AXIOM LAB OPS — Online</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXIOM LAB OPS</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
+/* =========================================================
+   AXIOM LAB OPS — PREMIUM BLACK OCEAN COMMAND UI
+   ========================================================= */
+
+:root{
+  --abyss:#010509;
+  --deep:#031018;
+  --trench:#061b27;
+
+  --panel:rgba(5,18,29,.72);
+  --panel-solid:#061721;
+  --panel-soft:rgba(8,30,43,.58);
+
+  --line:rgba(125,255,229,.11);
+  --line-2:rgba(125,255,229,.28);
+
+  --foam:#f2fffc;
+  --mist:#91afb6;
+  --dim:#55747c;
+
+  --glow:#59ffe0;
+  --glow-2:#39bfff;
+  --jelly:#9c7cff;
+  --coral:#ff6473;
+  --amber:#ffc75d;
+
+  --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --shadow:
+    0 25px 80px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
 
 body{
-  margin:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
-  color:#182234;
-  background:#07152e;
-  overflow-x:hidden
+  min-height:100vh;
+  overflow-x:hidden;
+  color:var(--foam);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(57,191,255,.10),transparent 28%),
+    radial-gradient(circle at 85% 25%,rgba(89,255,224,.08),transparent 30%),
+    linear-gradient(145deg,#010509,#03131d 48%,#01080d);
+  font-family:var(--body);
 }
 
-/* ================= OCEAN BACKGROUND ================= */
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
 
-.bg{
+button{
+  cursor:pointer;
+}
+
+::selection{
+  background:rgba(89,255,224,.24);
+  color:white;
+}
+
+/* =========================================================
+   ATMOSPHERE
+   ========================================================= */
+
+body::before{
+  content:"";
   position:fixed;
   inset:0;
-  z-index:-10;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 20% 20%,#173e72 0,transparent 35%),
-    radial-gradient(circle at 80% 70%,#321b62 0,transparent 35%),
-    linear-gradient(145deg,#06152d,#082b4d,#101c4b);
+  z-index:-5;
+  pointer-events:none;
+
+  background-image:
+    linear-gradient(rgba(89,255,224,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(89,255,224,.025) 1px,transparent 1px);
+
+  background-size:60px 60px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
 }
 
-.bg:before{
+body::after{
   content:"";
-  position:absolute;
+  position:fixed;
   inset:-20%;
+  z-index:-6;
+  pointer-events:none;
+
   background:
-    radial-gradient(circle at 20% 35%,#39bde833,transparent 20%),
-    radial-gradient(circle at 75% 55%,#a66cff33,transparent 22%),
-    radial-gradient(circle at 50% 5%,#36d9ff22,transparent 18%);
-  filter:blur(25px);
-  animation:oceanGlow 12s ease-in-out infinite alternate
+    radial-gradient(circle at 30% 30%,rgba(89,255,224,.07),transparent 20%),
+    radial-gradient(circle at 70% 70%,rgba(57,191,255,.06),transparent 22%);
+
+  animation:ambientMove 18s ease-in-out infinite alternate;
 }
 
-@keyframes oceanGlow{
-  from{transform:translate(-2%,-2%) scale(1)}
-  to{transform:translate(4%,3%) scale(1.1)}
+@keyframes ambientMove{
+  from{transform:translate3d(-2%, -1%,0) scale(1)}
+  to{transform:translate3d(2%, 2%,0) scale(1.08)}
 }
 
-/* bubbles */
-
-.bubbles{
+.water{
   position:fixed;
   inset:0;
   pointer-events:none;
-  overflow:hidden;
-  z-index:-8
-}
+  z-index:-3;
 
-.bubble{
-  position:absolute;
-  bottom:-80px;
-  width:10px;
-  height:10px;
-  border:1px solid #ffffff55;
-  border-radius:50%;
-  background:#ffffff12;
-  animation:rise linear infinite
-}
-
-@keyframes rise{
-  0%{transform:translateY(0) scale(.7);opacity:0}
-  10%{opacity:.6}
-  90%{opacity:.5}
-  100%{transform:translateY(-115vh) scale(1.3);opacity:0}
-}
-
-/* jellyfish */
-
-.jelly{
-  position:absolute;
-  width:75px;
-  height:65px;
-  border-radius:50% 50% 42% 42%;
-  background:radial-gradient(circle at 35% 25%,#ffffffaa,#79c8ff66 35%,#8b5cf644 75%);
-  box-shadow:
-    0 0 25px #63c9ff88,
-    0 0 60px #9d6cff44;
-  animation:floatJelly 9s ease-in-out infinite;
-  opacity:.75
-}
-
-.jelly:before{
-  content:"";
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:-42px;
-  height:50px;
   background:
-    linear-gradient(90deg,
-      transparent 0 8%,
-      #76d9ff88 9% 12%,
-      transparent 13% 28%,
-      #b47cff77 29% 33%,
-      transparent 34% 50%,
-      #72dfff77 51% 55%,
-      transparent 56% 72%,
-      #a878ff66 73% 77%,
-      transparent 78%);
-  border-radius:50%;
-  filter:blur(1px)
+    radial-gradient(ellipse at 50% -10%,rgba(89,255,224,.08),transparent 45%),
+    linear-gradient(to bottom,transparent,rgba(0,0,0,.32));
 }
 
-@keyframes floatJelly{
-  0%,100%{transform:translateY(0) translateX(0) rotate(-3deg)}
-  50%{transform:translateY(-35px) translateX(25px) rotate(4deg)}
+#sea{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+  pointer-events:none;
+  opacity:.75;
 }
 
-.j1{left:8%;top:18%;animation-delay:-2s;transform:scale(.8)}
-.j2{right:12%;top:30%;animation-delay:-5s;transform:scale(1.15)}
-.j3{left:42%;top:68%;animation-delay:-7s;transform:scale(.65)}
-.j4{right:35%;top:8%;animation-delay:-4s;transform:scale(.55)}
-
-/* ================= LANDING ================= */
+/* =========================================================
+   LANDING
+   ========================================================= */
 
 .landing{
   min-height:100vh;
+  position:relative;
   display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:30px;
-  position:relative
+  flex-direction:column;
+  justify-content:space-between;
+  padding:34px 5vw 28px;
+  overflow:hidden;
 }
 
-.landingCard{
-  width:min(850px,100%);
-  padding:65px 45px;
-  text-align:center;
-  border:1px solid #ffffff2b;
-  border-radius:32px;
-  background:#071a35aa;
-  backdrop-filter:blur(22px);
-  box-shadow:
-    0 30px 100px #00000066,
-    inset 0 1px #ffffff18
-}
-
-.landingLogo{
-  width:76px;
-  height:76px;
-  margin:auto;
-  border-radius:24px;
-  background:conic-gradient(#48d7ff,#8a6cff,#40e0c0,#48d7ff);
-  box-shadow:0 0 50px #57cfff66;
-  position:relative
-}
-
-.landingLogo:after{
+.landing::before{
   content:"";
   position:absolute;
-  inset:18px;
-  border:3px solid white;
-  border-radius:13px;
-  transform:rotate(45deg)
+  width:650px;
+  height:650px;
+  left:50%;
+  top:43%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(89,255,224,.10),
+    rgba(57,191,255,.035) 35%,
+    transparent 68%);
+  filter:blur(10px);
+  pointer-events:none;
 }
 
-.landing h1{
+.l-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  z-index:2;
+}
+
+.l-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:var(--display);
+  font-size:13px;
+  letter-spacing:.12em;
+  font-weight:600;
+}
+
+.mark{
+  width:24px;
+  height:24px;
+  display:inline-block;
+  position:relative;
+  border:1px solid rgba(89,255,224,.65);
+  transform:rotate(45deg);
+  box-shadow:
+    0 0 18px rgba(89,255,224,.22),
+    inset 0 0 14px rgba(89,255,224,.12);
+}
+
+.mark::after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  background:var(--glow);
+  opacity:.8;
+  box-shadow:0 0 15px var(--glow);
+}
+
+.l-tag{
+  font-size:10px;
+  color:var(--dim);
+  letter-spacing:.22em;
+  font-weight:700;
+}
+
+.l-center{
+  position:relative;
+  z-index:2;
+  max-width:1050px;
+  margin:auto;
+  width:100%;
+}
+
+.l-kicker{
+  color:var(--glow);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.35em;
+  margin-bottom:25px;
+}
+
+.wordmark{
+  font-family:var(--display);
+  font-size:clamp(50px,11vw,150px);
+  line-height:.9;
+  letter-spacing:-.07em;
+
+  background:linear-gradient(
+    110deg,
+    #ffffff 5%,
+    #bffef1 38%,
+    #59ffe0 65%,
+    #39bfff 100%
+  );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+
+  filter:drop-shadow(0 0 35px rgba(89,255,224,.13));
+}
+
+.l-sub{
+  margin-top:30px;
+  max-width:690px;
+  color:var(--mist);
+  font-size:clamp(16px,2vw,21px);
+  line-height:1.7;
+}
+
+.enter{
+  margin-top:42px;
+  border:1px solid rgba(89,255,224,.35);
+  background:rgba(89,255,224,.07);
   color:white;
-  font-size:clamp(42px,7vw,78px);
-  margin:25px 0 12px;
-  letter-spacing:-4px
+  padding:16px 24px;
+  border-radius:12px;
+  font-weight:800;
+  letter-spacing:.03em;
+  transition:.25s ease;
+  position:relative;
+  overflow:hidden;
 }
 
-.landing p{
-  color:#b7c8e2;
-  max-width:600px;
-  margin:0 auto 30px;
-  line-height:1.7
+.enter::before,
+.btn::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:70%;
+  height:100%;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.18),
+    transparent
+  );
+  transform:skewX(-20deg);
+  transition:.55s;
 }
 
-.enterBtn{
-  border:0;
-  padding:15px 25px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#4f8cff,#8b63e8);
-  color:white;
-  font-weight:900;
-  font-size:15px;
-  cursor:pointer;
-  box-shadow:0 15px 35px #4f8cff44;
-  transition:.2s
+.enter:hover::before,
+.btn:hover::before{
+  left:140%;
 }
 
-.enterBtn:hover{
+.enter:hover{
   transform:translateY(-3px);
-  box-shadow:0 20px 45px #4f8cff66
+  border-color:var(--glow);
+  background:rgba(89,255,224,.12);
+  box-shadow:
+    0 0 35px rgba(89,255,224,.12),
+    0 15px 40px rgba(0,0,0,.3);
 }
 
-/* ================= APP ================= */
+.l-modules{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:70px;
+}
+
+.module{
+  padding:9px 12px;
+  border:1px solid var(--line);
+  background:rgba(5,18,29,.42);
+  border-radius:999px;
+  color:var(--mist);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  backdrop-filter:blur(12px);
+}
+
+.l-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:var(--dim);
+  font-size:10px;
+  letter-spacing:.15em;
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
 
 .app{
   min-height:100vh;
   display:grid;
-  grid-template-columns:245px 1fr
+  grid-template-columns:270px minmax(0,1fr);
 }
 
 .side{
-  padding:20px 14px;
-  background:#07182dcc;
-  backdrop-filter:blur(22px);
-  border-right:1px solid #ffffff18;
   position:sticky;
   top:0;
-  height:100vh
+  height:100vh;
+  padding:24px 16px;
+  border-right:1px solid var(--line);
+  background:
+    linear-gradient(180deg,
+      rgba(3,15,23,.94),
+      rgba(2,10,16,.82));
+  backdrop-filter:blur(28px);
+  z-index:50;
 }
 
-.brand{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  margin:0 8px 28px;
-  color:white
-}
-
-.mark{
-  width:40px;
-  height:40px;
-  border-radius:13px;
-  background:conic-gradient(#4e77ef,#29bcae,#8b67dd,#4e77ef);
-  position:relative;
-  box-shadow:0 10px 30px #5879db40
-}
-
-.mark:after{
+.side::after{
   content:"";
   position:absolute;
-  inset:9px;
-  border:2px solid white;
-  border-radius:9px;
-  transform:rotate(45deg)
+  right:-1px;
+  top:8%;
+  height:84%;
+  width:1px;
+  background:linear-gradient(
+    transparent,
+    var(--glow),
+    transparent
+  );
+  opacity:.35;
 }
 
-.brand b{font-size:14px}
-.brand small{
-  display:block;
-  color:#8298b7;
-  font-size:9px;
-  letter-spacing:1.5px;
-  margin-top:2px
+.side-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:6px 10px 28px;
+  font-family:var(--display);
+  font-size:12px;
+  letter-spacing:.1em;
 }
 
-.nav{
+.gauge{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.gbtn{
+  width:100%;
   display:grid;
-  gap:5px
-}
+  grid-template-columns:28px 1fr auto;
+  align-items:center;
+  gap:8px;
 
-.nav button{
-  border:0;
+  border:1px solid transparent;
   background:transparent;
-  padding:12px;
+  color:var(--mist);
+
+  padding:13px 12px;
   border-radius:12px;
   text-align:left;
-  color:#9aacc6;
-  font-weight:750;
-  cursor:pointer;
-  transition:.2s
+
+  transition:.22s ease;
+  position:relative;
 }
 
-.nav button:hover{
-  background:#ffffff0d;
-  color:#7db4ff;
-  transform:translateX(3px)
+.gbtn:hover{
+  color:white;
+  background:rgba(89,255,224,.045);
+  border-color:var(--line);
+  transform:translateX(3px);
 }
 
-.nav button.on{
-  background:#315ea633;
-  color:#7db4ff;
-  box-shadow:inset 3px #4b9eff
+.gbtn.on{
+  color:white;
+  border-color:rgba(89,255,224,.2);
+  background:
+    linear-gradient(90deg,
+      rgba(89,255,224,.11),
+      rgba(57,191,255,.035));
+  box-shadow:
+    inset 3px 0 0 var(--glow),
+    0 10px 35px rgba(0,0,0,.18);
 }
+
+.gbtn.on::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:18%;
+  width:3px;
+  height:64%;
+  background:var(--glow);
+  border-radius:5px;
+  box-shadow:0 0 14px var(--glow);
+}
+
+.gbtn span{
+  font-weight:700;
+  font-size:13px;
+}
+
+.gbtn .m{
+  font-style:normal;
+  color:var(--dim);
+  font-size:9px;
+  letter-spacing:.1em;
+}
+
+.gbtn .dot{
+  width:7px;
+  height:7px;
+  background:var(--coral);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--coral);
+  margin-left:9px;
+}
+
+.who{
+  position:absolute;
+  bottom:20px;
+  left:16px;
+  right:16px;
+
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  color:var(--mist);
+
+  border-radius:12px;
+  padding:12px;
+  text-align:left;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.who strong{
+  color:white;
+  display:block;
+}
+
+/* =========================================================
+   MAIN TOP
+   ========================================================= */
 
 main{
-  max-width:1450px;
-  width:100%;
-  margin:auto;
-  padding:25px 32px
+  min-width:0;
+  padding:0 34px 70px;
 }
 
-.top{
+.mtop{
+  height:82px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:18px
+  justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  margin-bottom:38px;
+}
+
+.menuBtn{
+  display:none;
 }
 
 .crumb{
-  color:#9badc5;
-  font-size:13px
-}
-
-.user{
-  background:#ffffff12;
-  color:white;
-  border:1px solid #ffffff18;
-  padding:9px 12px;
-  border-radius:11px;
-  font-weight:700;
-  cursor:pointer
-}
-
-.hero,.panel{
-  background:#ffffffee;
-  backdrop-filter:blur(18px);
-  border:1px solid #ffffffaa;
-  border-radius:25px;
-  box-shadow:0 20px 70px #00000025
-}
-
-.hero{
-  padding:40px;
-  position:relative;
-  overflow:hidden
-}
-
-.hero:after{
-  content:"";
-  position:absolute;
-  width:260px;
-  height:260px;
-  border:1px solid #567ce733;
-  border-radius:50%;
-  right:-100px;
-  top:-100px;
-  box-shadow:
-    0 0 0 30px #567ce70a,
-    0 0 0 65px #567ce705;
-  animation:spin 18s linear infinite
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.tag{
-  display:inline-block;
-  background:#edf3ff;
-  color:#4164ba;
-  border-radius:99px;
-  padding:7px 10px;
+  color:var(--dim);
   font-size:10px;
-  font-weight:800;
-  letter-spacing:1px
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
 
-.hero h1{
-  font-size:clamp(36px,5vw,62px);
-  line-height:1.03;
-  letter-spacing:-2.8px;
-  margin:15px 0 12px
+.quick{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  border:1px solid var(--line-2);
+  background:rgba(89,255,224,.055);
+  color:var(--glow);
+  font-size:21px;
+  transition:.2s;
+}
+
+.quick:hover{
+  transform:rotate(90deg);
+  border-color:var(--glow);
+  box-shadow:0 0 25px rgba(89,255,224,.12);
+}
+
+/* =========================================================
+   PAGE HEAD
+   ========================================================= */
+
+.page{
+  max-width:1450px;
+  margin:auto;
+}
+
+.page-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-end;
+  margin-bottom:26px;
+}
+
+.eyebrow{
+  color:var(--glow);
+  font-size:10px;
+  letter-spacing:.28em;
+  font-weight:800;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+
+h1{
+  font-family:var(--display);
+  font-size:clamp(25px,3vw,44px);
+  letter-spacing:-.045em;
+  line-height:1.05;
+}
+
+h2{
+  font-family:var(--display);
+  font-size:18px;
+  letter-spacing:-.025em;
 }
 
 .muted{
-  color:#708097;
-  line-height:1.6
-}
-
-.chips{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:20px
-}
-
-.chip{
-  padding:7px 10px;
-  border-radius:99px;
-  background:#f0f3f7;
-  color:#5c687a;
-  font-size:11px;
-  font-weight:800
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-top:15px
-}
-
-.card{
-  padding:18px;
-  border:1px solid #e0e6ef;
-  background:#ffffffd9;
-  border-radius:18px
-}
-
-.card b.big{font-size:29px}
-
-.card small{
-  display:block;
-  color:#748095;
-  margin-top:5px
-}
-
-.panel{
-  padding:24px;
-  min-height:70vh
-}
-
-.panel h2{
-  margin:0;
-  font-size:28px
-}
-
-.tools{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  margin:18px 0;
-  flex-wrap:wrap
-}
-
-.btn{
-  border:1px solid #dfe5ed;
-  background:#fff;
-  padding:10px 13px;
-  border-radius:11px;
-  font-weight:800;
-  cursor:pointer;
-  transition:.18s
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px #243c600f
-}
-
-.primary{
-  border:0;
-  background:#3f6fe8;
-  color:white;
-  box-shadow:0 8px 20px #3f6fe838
-}
-
-.danger{color:#bd4451}
-
-.table{
-  overflow:auto;
-  border:1px solid #e1e7ef;
-  border-radius:16px;
-  background:#fff
-}
-
-.table table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:680px
-}
-
-.table th,.table td{
-  padding:13px;
-  border-bottom:1px solid #edf0f4;
-  text-align:left;
-  font-size:13px
-}
-
-.table th{
-  font-size:10px;
-  color:#778397;
-  text-transform:uppercase;
-  letter-spacing:.8px
-}
-
-.empty{
-  text-align:center;
-  padding:60px 20px;
-  color:#738096
-}
-
-.pill{
-  padding:5px 8px;
-  border-radius:99px;
-  background:#edf3ff;
-  color:#4265b7;
-  font-size:10px;
-  font-weight:800
-}
-
-.pill.green{
-  background:#e8f7ef;
-  color:#167b53
-}
-
-.pill.red{
-  background:#ffedef;
-  color:#b84250
-}
-
-/* ================= CHAT ================= */
-
-.chat{
-  display:flex;
-  flex-direction:column;
-  height:60vh
-}
-
-.msgs{
-  flex:1;
-  overflow:auto;
-  padding:8px;
-  scroll-behavior:smooth
-}
-
-.msg{
-  max-width:78%;
-  padding:11px 13px;
-  border-radius:14px;
-  margin:8px 0;
-  font-size:13px;
-  line-height:1.55;
-  white-space:pre-wrap;
-  word-break:break-word
-}
-
-.bot{
-  background:#eef2f7;
-  color:#182234
-}
-
-.me{
-  margin-left:auto;
-  background:#eaf1ff;
-  color:#2d57ae
-}
-
-.thinking{
-  opacity:.7;
-  font-style:italic
-}
-
-.chatbar{
-  display:flex;
-  gap:8px;
-  margin-top:8px
-}
-
-.chatbar input{
-  flex:1;
-  border:1px solid #dce3ed;
-  border-radius:11px;
-  padding:12px;
-  outline:0
-}
-
-.chatbar input:focus{
-  border-color:#7898ea
-}
-
-/* ================= MODAL ================= */
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:#152238aa;
-  backdrop-filter:blur(8px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:10
-}
-
-.modal.show{display:flex}
-
-.dialog{
-  background:white;
-  border-radius:21px;
-  padding:23px;
-  width:min(620px,100%);
-  max-height:90vh;
-  overflow:auto
-}
-
-.dialog h3{
-  margin:0 0 14px;
-  font-size:21px
-}
-
-label{
-  display:block;
-  font-size:11px;
-  font-weight:800;
-  color:#6e7a8e;
-  margin:11px 0 5px
-}
-
-input,select,textarea{
-  width:100%;
-  padding:11px;
-  border:1px solid #dce3ec;
-  border-radius:10px
-}
-
-textarea{
-  min-height:90px
+  color:var(--mist);
+  line-height:1.6;
 }
 
 .actions{
   display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:17px
+  gap:10px;
+  flex-wrap:wrap;
 }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn{
+  position:relative;
+  overflow:hidden;
+
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.025);
+  color:white;
+
+  border-radius:11px;
+  padding:11px 15px;
+  font-size:12px;
+  font-weight:800;
+
+  transition:.22s ease;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  border-color:rgba(89,255,224,.48);
+  box-shadow:0 12px 35px rgba(0,0,0,.25);
+}
+
+.btn.primary{
+  color:#00110e;
+  background:var(--glow);
+  border-color:var(--glow);
+  box-shadow:0 0 28px rgba(89,255,224,.12);
+}
+
+.btn.primary:hover{
+  box-shadow:
+    0 0 35px rgba(89,255,224,.22),
+    0 14px 35px rgba(0,0,0,.3);
+}
+
+.btn.danger{
+  color:white;
+  border-color:rgba(255,100,115,.25);
+  background:rgba(255,100,115,.06);
+}
+
+.btn.small{
+  padding:8px 10px;
+  font-size:10px;
+}
+
+/* =========================================================
+   PANELS / CARDS
+   ========================================================= */
+
+.panel,
+.card{
+  border:1px solid var(--line);
+  background:
+    linear-gradient(145deg,
+      rgba(9,31,44,.74),
+      rgba(3,14,22,.74));
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
+  position:relative;
+  overflow:hidden;
+}
+
+.panel::before,
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg,
+      rgba(255,255,255,.035),
+      transparent 25%);
+}
+
+.panel:hover,
+.card:hover{
+  border-color:rgba(125,255,229,.18);
+}
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
+.hero{
+  min-height:310px;
+  padding:30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  background:
+    radial-gradient(circle at 85% 20%,rgba(57,191,255,.12),transparent 25%),
+    radial-gradient(circle at 20% 100%,rgba(89,255,224,.09),transparent 30%),
+    linear-gradient(145deg,rgba(7,31,43,.92),rgba(2,12,20,.82));
+}
+
+.hero::after{
+  content:"01 / COMMAND";
+  position:absolute;
+  right:25px;
+  bottom:22px;
+  color:rgba(145,175,182,.22);
+  font-family:var(--display);
+  font-size:9px;
+  letter-spacing:.18em;
+}
+
+.hero-title{
+  font-family:var(--display);
+  font-size:clamp(30px,5vw,70px);
+  line-height:1;
+  letter-spacing:-.06em;
+  max-width:700px;
+}
+
+.hero-title span{
+  color:var(--glow);
+  text-shadow:0 0 28px rgba(89,255,224,.16);
+}
+
+.hero-copy{
+  max-width:600px;
+  color:var(--mist);
+  margin-top:17px;
+  line-height:1.6;
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  width:max-content;
+
+  padding:7px 10px;
+  border:1px solid rgba(89,255,224,.18);
+  border-radius:999px;
+
+  color:var(--glow);
+  background:rgba(89,255,224,.05);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+
+.status i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--glow);
+  box-shadow:0 0 14px var(--glow);
+  animation:pulse 1.8s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.45;transform:scale(.7)}
+}
+
+.bento{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr;
+  gap:15px;
+  margin-top:15px;
+}
+
+.metric{
+  min-height:180px;
+  padding:22px;
+}
+
+.metric-label{
+  color:var(--dim);
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  font-size:9px;
+  font-weight:800;
+}
+
+.metric-value{
+  font-family:var(--display);
+  font-size:42px;
+  margin-top:24px;
+}
+
+.metric-sub{
+  color:var(--mist);
+  font-size:11px;
+  margin-top:7px;
+}
+
+.capacity{
+  display:flex;
+  gap:4px;
+  margin-top:22px;
+}
+
+.capacity i{
+  height:7px;
+  flex:1;
+  border-radius:5px;
+  background:rgba(255,255,255,.06);
+}
+
+.capacity i.active{
+  background:var(--glow);
+  box-shadow:0 0 10px rgba(89,255,224,.15);
+}
+
+.ring{
+  width:120px;
+  height:120px;
+  margin:18px auto 0;
+  position:relative;
+}
+
+.ring svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+
+.ring circle{
+  fill:none;
+  stroke-width:7;
+}
+
+.ring .track{
+  stroke:rgba(255,255,255,.06);
+}
+
+.ring .progress{
+  stroke:var(--glow);
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 7px rgba(89,255,224,.5));
+}
+
+.ring-text{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-family:var(--display);
+  font-size:18px;
+}
+
+.crisis-panel{
+  margin-top:15px;
+  padding:23px;
+}
+
+.crisis-list-mini{
+  display:grid;
+  gap:9px;
+  margin-top:18px;
+}
+
+.crisis-mini{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:rgba(0,0,0,.12);
+}
+
+.crisis-mini b{
+  font-size:12px;
+}
+
+.crisis-mini span{
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+}
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.input,
+select,
+textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:rgba(0,0,0,.22);
+  color:white;
+  border-radius:11px;
+  outline:none;
+  padding:11px 12px;
+  transition:.2s;
+}
+
+.input:focus,
+select:focus,
+textarea:focus{
+  border-color:rgba(89,255,224,.48);
+  box-shadow:0 0 0 3px rgba(89,255,224,.055);
+}
+
+.search{
+  flex:1;
+  min-width:220px;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  min-width:700px;
+  border-collapse:collapse;
+}
+
+th{
+  color:var(--dim);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  text-align:left;
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+}
+
+td{
+  padding:16px;
+  border-bottom:1px solid rgba(125,255,229,.065);
+  color:var(--mist);
+  font-size:12px;
+}
+
+td strong{
+  color:white;
+}
+
+tr{
+  transition:.18s;
+}
+
+tbody tr:hover{
+  background:rgba(89,255,224,.025);
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  font-weight:800;
+}
+
+.pill.available{
+  color:var(--glow);
+  border-color:rgba(89,255,224,.18);
+  background:rgba(89,255,224,.045);
+}
+
+.pill.low{
+  color:var(--amber);
+  border-color:rgba(255,199,93,.2);
+  background:rgba(255,199,93,.05);
+}
+
+.pill.critical{
+  color:var(--coral);
+  border-color:rgba(255,100,115,.2);
+  background:rgba(255,100,115,.05);
+}
+
+/* =========================================================
+   WORKFLOW
+   ========================================================= */
+
+.workflow-board{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(230px,1fr));
+  gap:13px;
+  overflow-x:auto;
+}
+
+.workflow-col{
+  padding:15px;
+  min-height:480px;
+  background:rgba(3,14,21,.55);
+  border:1px solid var(--line);
+  border-radius:15px;
+}
+
+.col-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.col-head span{
+  color:var(--dim);
+  font-size:9px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+.wcount{
+  color:var(--glow);
+}
+
+.workflow-card{
+  padding:16px;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(145deg,
+      rgba(12,38,50,.8),
+      rgba(3,14,21,.85));
+  border-radius:13px;
+  margin-bottom:10px;
+  transition:.2s;
+}
+
+.workflow-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(89,255,224,.24);
+  box-shadow:0 15px 35px rgba(0,0,0,.25);
+}
+
+.workflow-card h3{
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.workflow-card p{
+  color:var(--mist);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.workflow-meta{
+  margin-top:13px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+
+.workflow-owner{
+  color:var(--dim);
+  font-size:9px;
+}
+
+/* =========================================================
+   UPGRADES
+   ========================================================= */
+
+.upgrade-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+
+.upgrade{
+  padding:24px;
+  min-height:220px;
+}
+
+.upgrade-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+}
+
+.upgrade-icon{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  color:var(--glow);
+  border:1px solid rgba(89,255,224,.18);
+  background:rgba(89,255,224,.055);
+  font-size:20px;
+}
+
+.upgrade h3{
+  margin-top:22px;
+  font-size:16px;
+}
+
+.upgrade p{
+  margin-top:8px;
+  color:var(--mist);
+  font-size:12px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+.cost{
+  color:var(--amber);
+  font-size:10px;
+  letter-spacing:.12em;
+}
+
+.toggle{
+  width:44px;
+  height:24px;
+  border:1px solid var(--line-2);
+  background:rgba(255,255,255,.05);
+  border-radius:999px;
+  position:relative;
+  padding:0;
+}
+
+.toggle::after{
+  content:"";
+  position:absolute;
+  width:16px;
+  height:16px;
+  top:3px;
+  left:4px;
+  border-radius:50%;
+  background:var(--dim);
+  transition:.2s;
+}
+
+.toggle.active{
+  background:rgba(89,255,224,.13);
+  border-color:rgba(89,255,224,.4);
+}
+
+.toggle.active::after{
+  left:22px;
+  background:var(--glow);
+  box-shadow:0 0 12px rgba(89,255,224,.5);
+}
+
+/* =========================================================
+   CRISIS
+   ========================================================= */
+
+.crisis-grid{
+  display:grid;
+  gap:12px;
+}
+
+.crisis-item{
+  padding:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:
+    linear-gradient(90deg,
+      rgba(255,100,115,.035),
+      rgba(3,14,21,.75));
+}
+
+.crisis-item.amber{
+  background:
+    linear-gradient(90deg,
+      rgba(255,199,93,.035),
+      rgba(3,14,21,.75));
+}
+
+.crisis-info h3{
+  font-size:14px;
+}
+
+.crisis-info p{
+  color:var(--mist);
+  font-size:11px;
+  margin-top:6px;
+}
+
+/* =========================================================
+   AI ASSISTANT
+   ========================================================= */
+
+.chat{
+  min-height:650px;
+  display:flex;
+  flex-direction:column;
+}
+
+.messages{
+  flex:1;
+  padding:24px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.message{
+  max-width:78%;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.message.ai{
+  background:rgba(89,255,224,.045);
+  align-self:flex-start;
+}
+
+.message.user{
+  background:rgba(57,191,255,.07);
+  align-self:flex-end;
+}
+
+.suggestions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:0 24px 15px;
+}
+
+.suggestion{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  color:var(--mist);
+  padding:8px 10px;
+  border-radius:999px;
+  font-size:10px;
+}
+
+.chat-form{
+  display:flex;
+  gap:8px;
+  padding:15px;
+  border-top:1px solid var(--line);
+}
+
+.chat-form .input{
+  flex:1;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+
+  display:none;
+  place-items:center;
+
+  padding:20px;
+
+  background:rgba(0,5,9,.76);
+  backdrop-filter:blur(15px);
+}
+
+.modal.show{
+  display:grid;
+}
+
+.modal-box{
+  width:min(560px,100%);
+  max-height:90vh;
+  overflow:auto;
+
+  padding:25px;
+
+  border:1px solid var(--line-2);
+  border-radius:20px;
+
+  background:
+    linear-gradient(145deg,
+      rgba(8,29,41,.97),
+      rgba(2,11,18,.98));
+
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.6),
+    0 0 60px rgba(89,255,224,.05);
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.close{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  color:var(--mist);
+}
+
+.form-grid{
+  display:grid;
+  gap:13px;
+}
+
+.field{
+  display:grid;
+  gap:7px;
+}
+
+.field label{
+  color:var(--dim);
+  font-size:9px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.form-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:8px;
+}
+
+/* =========================================================
+   TOAST
+   ========================================================= */
 
 .toast{
   position:fixed;
-  right:20px;
-  bottom:20px;
-  background:#172238;
-  color:#fff;
-  padding:12px 14px;
-  border-radius:11px;
+  right:22px;
+  bottom:22px;
+  z-index:200;
+
+  min-width:250px;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  padding:13px 15px;
+
+  border:1px solid var(--line-2);
+  border-radius:12px;
+
+  background:rgba(4,17,25,.92);
+  backdrop-filter:blur(18px);
+
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+
   transform:translateY(20px);
   opacity:0;
+  pointer-events:none;
+
   transition:.25s;
-  z-index:30
 }
 
 .toast.show{
+  transform:translateY(0);
   opacity:1;
-  transform:none
 }
 
-/* ================= MOBILE ================= */
+.toast-dot{
+  width:8px;
+  height:8px;
+  background:var(--glow);
+  border-radius:50%;
+  box-shadow:0 0 12px var(--glow);
+}
 
-@media(max-width:850px){
-  .app{grid-template-columns:1fr}
-  .side{
-    height:auto;
-    position:relative;
-    border-right:0;
-    border-bottom:1px solid #ffffff18
+#toastText{
+  color:var(--mist);
+  font-size:11px;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1100px){
+  .app{
+    grid-template-columns:220px minmax(0,1fr);
   }
-  .grid{grid-template-columns:repeat(2,1fr)}
-  main{padding:18px}
+
+  main{
+    padding-left:22px;
+    padding-right:22px;
+  }
+
+  .bento{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .hero{
+    grid-column:1/-1;
+  }
+
+  .workflow-board{
+    grid-template-columns:repeat(4,250px);
+  }
 }
 
-@media(max-width:550px){
-  .grid{grid-template-columns:1fr}
-  .hero{padding:27px}
-  .landingCard{padding:45px 25px}
+@media(max-width:800px){
+  .app{
+    display:block;
+  }
+
+  .side{
+    position:fixed;
+    left:0;
+    top:0;
+    width:280px;
+    transform:translateX(-105%);
+    transition:.3s ease;
+    box-shadow:25px 0 70px rgba(0,0,0,.4);
+  }
+
+  .side.open{
+    transform:translateX(0);
+  }
+
+  .menuBtn{
+    display:grid;
+    place-items:center;
+    width:40px;
+    height:40px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:rgba(255,255,255,.025);
+    color:white;
+  }
+
+  .mtop{
+    gap:12px;
+  }
+
+  .bento{
+    grid-template-columns:1fr;
+  }
+
+  .hero{
+    min-height:360px;
+  }
+
+  .upgrade-grid{
+    grid-template-columns:1fr;
+  }
+
+  .page-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .l-tag{
+    display:none;
+  }
+}
+
+@media(max-width:520px){
+  .landing{
+    padding:25px 20px;
+  }
+
+  main{
+    padding:0 14px 50px;
+  }
+
+  .mtop{
+    margin-bottom:25px;
+  }
+
+  .hero,
+  .metric,
+  .crisis-panel,
+  .upgrade{
+    padding:18px;
+  }
+
+  .hero-title{
+    font-size:31px;
+  }
+
+  .wordmark{
+    font-size:48px;
+  }
+
+  .l-sub{
+    font-size:15px;
+  }
+
+  .workflow-board{
+    grid-template-columns:repeat(4,225px);
+  }
+
+  .crisis-item{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .chat{
+    min-height:560px;
+  }
+
+  .message{
+    max-width:90%;
+  }
+}
+
+[hidden]{
+  display:none !important;
 }
 </style>
 </head>
 
-<body>
+<body data-depth="0">
 
-<div class="bg">
-  <div class="jelly j1"></div>
-  <div class="jelly j2"></div>
-  <div class="jelly j3"></div>
-  <div class="jelly j4"></div>
-</div>
+<div class="water"></div>
+<canvas id="sea"></canvas>
 
-<div class="bubbles">
-  <div class="bubble" style="left:8%;animation-duration:12s"></div>
-  <div class="bubble" style="left:17%;animation-duration:16s;animation-delay:2s"></div>
-  <div class="bubble" style="left:29%;animation-duration:10s;animation-delay:4s"></div>
-  <div class="bubble" style="left:44%;animation-duration:18s;animation-delay:1s"></div>
-  <div class="bubble" style="left:61%;animation-duration:13s;animation-delay:3s"></div>
-  <div class="bubble" style="left:76%;animation-duration:17s;animation-delay:5s"></div>
-  <div class="bubble" style="left:91%;animation-duration:11s;animation-delay:2s"></div>
-</div>
+<!-- =======================================================
+     LANDING
+     ======================================================= -->
 
-<div id="root"></div>
+<section class="landing" id="landing">
 
-<div class="modal" id="modal">
-  <div class="dialog" id="dialog"></div>
-</div>
+  <div class="l-top">
+    <div class="l-brand">
+      <span class="mark"></span>
+      AXIOM LAB OPS
+    </div>
 
-<div class="toast" id="toast"></div>
+    <div class="l-tag">
+      STRATEGIC LAB RESOURCE INTELLIGENCE
+    </div>
+  </div>
 
-<script>
+  <div class="l-center">
 
-const pages=[
-  ["overview","Overview"],
-  ["resources","Resources"],
-  ["workflows","Workflows"],
-  ["upgrades","Upgrades"],
-  ["crisis","Crisis Center"],
-  ["ai","AI Advisor"]
-];
+    <div class="l-kicker">
+      // OPERATIONAL INTELLIGENCE SYSTEM
+    </div>
 
-let S=JSON.parse(localStorage.getItem("axiom_online")||"null")||{
-  name:"",
-  lab:"",
-  resources:[],
-  workflows:[],
-  upgrades:[],
-  crises:[],
-  crisisEnabled:false,
-  chat:[]
-};
+    <div class="wordmark">
+      AXIOM
+    </div>
 
-let page="overview";
+    <p class="l-sub">
+      A command environment for managing laboratory resources,
+      workflows, upgrades and operational crises.
+    </p>
 
-const esc=x=>String(x??"").replace(
-  /[&<>"']/g,
-  c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c])
-);
+    <button class="enter" id="enterBtn">
+      Enter Command →
+    </button>
 
-function save(){
-  localStorage.setItem("axiom_online",JSON.stringify(S));
-}
+    <div class="l-modules">
+      <div class="module">Resource Control</div>
+      <div class="module">Workflow Intelligence</div>
+      <div class="module">Upgrade Engine</div>
+      <div class="module">Crisis Center</div>
+      <div class="module">AI Assistant</div>
+    </div>
 
-function $(x){
-  return document.getElementById(x);
-}
+  </div>
 
-function toast(x){
-  $("toast").textContent=x;
-  $("toast").classList.add("show");
-  setTimeout(
-    ()=>$("toast").classList.remove("show"),
-    1600
-  );
-}
+  <div class="l-bottom">
+    <span>AXIOM OS v5.0</span>
+    <span>LAB OPERATIONS / COMMAND INTERFACE</span>
+  </div>
 
-/* ================= LANDING ================= */
+</section>
 
-function landing(){
 
-  $("root").innerHTML=`
+<!-- =======================================================
+     APPLICATION
+     ======================================================= -->
 
-    <div class="landing">
+<section class="app" id="app" hidden>
 
-      <div class="landingCard">
+  <aside class="side" id="sidebar">
 
-        <div class="landingLogo"></div>
+    <div class="side-brand">
+      <span class="mark"></span>
+      AXIOM
+    </div>
 
-        <h1>AXIOM</h1>
+    <nav class="gauge">
 
-        <p>
-          Lab Operations Intelligence Platform.
-          Manage your resources, workflows, upgrades,
-          crises and AI-assisted lab operations
-          in one workspace.
-        </p>
+      <button class="gbtn on" data-page="overview">
+        ◈
+        <span>Overview</span>
+        <em class="m">01</em>
+      </button>
 
-        <button class="enterBtn" onclick="enterLab()">
-          Enter Lab →
-        </button>
+      <button class="gbtn" data-page="resources">
+        ◇
+        <span>Resources</span>
+        <em class="m">02</em>
+      </button>
 
+      <button class="gbtn" data-page="workflows">
+        ◎
+        <span>Workflows</span>
+        <em class="m">03</em>
+      </button>
+
+      <button class="gbtn" data-page="upgrades">
+        ✦
+        <span>Upgrades</span>
+        <em class="m">04</em>
+      </button>
+
+      <button class="gbtn" data-page="crisis">
+        <span class="dot"></span>
+        <span>Crisis Center</span>
+        <em class="m">05</em>
+      </button>
+
+      <button class="gbtn" data-page="assistant">
+        ✧
+        <span>AI Assistant</span>
+        <em class="m">06</em>
+      </button>
+
+    </nav>
+
+    <button class="who" id="profileBtn">
+      <strong>Administrator</strong>
+      Lab Operations
+    </button>
+
+  </aside>
+
+
+  <main>
+
+    <div class="mtop">
+
+      <button class="menuBtn" id="menuBtn">
+        ☰
+      </button>
+
+      <div class="crumb">
+        AXIOM / COMMAND / LIVE
       </div>
+
+      <button class="quick" id="quickBtn">
+        +
+      </button>
 
     </div>
 
-  `;
-}
 
-function enterLab(){
+    <!-- ===================================================
+         OVERVIEW
+         =================================================== -->
 
-  if(S.name && S.lab){
-    drawApp();
-  }else{
-    settings(true);
-  }
+    <section class="page" data-section="overview">
 
-}
+      <div class="page-head">
 
-/* ================= APP ================= */
+        <div>
+          <div class="eyebrow">01 / System</div>
+          <h1>Operational Overview</h1>
+        </div>
 
-function drawApp(){
+        <div class="actions">
+          <button class="btn primary" id="overviewAddBtn">
+            + Add Resource
+          </button>
+        </div>
 
-  $("root").innerHTML=`
+      </div>
 
-    <div class="app">
 
-      <aside class="side">
+      <div class="panel hero">
 
-        <div class="brand">
+        <div>
+          <div class="status">
+            <i></i>
+            SYSTEM OPERATIONAL
+          </div>
 
-          <div class="mark"></div>
+          <div class="hero-title">
+            LAB CONTROL<br>
+            <span>AT DEPTH.</span>
+          </div>
 
-          <div>
-            <b>AXIOM LAB OPS</b>
-            <small>ONLINE LAB SIMULATOR</small>
+          <p class="hero-copy">
+            Monitor critical resources, coordinate workflows,
+            activate upgrades and respond to operational incidents
+            from a single command environment.
+          </p>
+        </div>
+
+        <div class="actions">
+
+          <button
+            class="btn primary"
+            data-go="resources">
+            Manage Resources →
+          </button>
+
+          <button
+            class="btn"
+            data-go="assistant">
+            Ask AXIOM ✧
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="bento">
+
+        <div class="card metric">
+
+          <div class="metric-label">
+            Resource Capacity
+          </div>
+
+          <div class="metric-value" id="resourceTotal">
+            0
+          </div>
+
+          <div class="metric-sub">
+            total tracked units
+          </div>
+
+          <div class="capacity" id="resourceSegments">
+          </div>
+
+          <div class="metric-sub">
+            <span id="availableCount">0</span>
+            available ·
+            <span id="lowCount">0</span>
+            low ·
+            <span id="criticalCount">0</span>
+            critical
           </div>
 
         </div>
 
-        <div class="nav" id="nav"></div>
 
-      </aside>
+        <div class="card metric">
 
-      <main>
+          <div class="metric-label">
+            Workflow Pulse
+          </div>
 
-        <div class="top">
+          <div class="ring">
 
-          <span class="crumb" id="crumb"></span>
+            <svg viewBox="0 0 120 120">
 
-          <button class="user" onclick="settings()">
-            ⚙ <span id="user"></span>
+              <circle
+                class="track"
+                cx="60"
+                cy="60"
+                r="49">
+              </circle>
+
+              <circle
+                class="progress"
+                id="workflowRing"
+                cx="60"
+                cy="60"
+                r="49"
+                stroke-dasharray="308"
+                stroke-dashoffset="95">
+              </circle>
+
+            </svg>
+
+            <div class="ring-text">
+              <span id="workflowPercent">69%</span>
+            </div>
+
+          </div>
+
+          <div class="metric-sub" style="text-align:center">
+            operational workflow efficiency
+          </div>
+
+        </div>
+
+
+        <div class="card metric">
+
+          <div class="metric-label">
+            Upgrade System
+          </div>
+
+          <div class="metric-value" id="upgradeCount">
+            0
+          </div>
+
+          <div class="metric-sub">
+            active intelligence modules
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel crisis-panel">
+
+        <div class="page-head" style="margin-bottom:0">
+
+          <div>
+            <div class="eyebrow">05 / Alerts</div>
+            <h2>Crisis Center</h2>
+          </div>
+
+          <button class="btn small" data-go="crisis">
+            Open Center →
           </button>
 
         </div>
 
-        <div id="app"></div>
-
-      </main>
-
-    </div>
-
-  `;
-
-  nav();
-  go(page);
-
-}
-
-/* ================= NAV ================= */
-
-function nav(){
-
-  $("nav").innerHTML=pages.map(
-    p=>`
-      <button
-        class="${page==p[0]?'on':''}"
-        onclick="go('${p[0]}')">
-        ${p[1]}
-      </button>
-    `
-  ).join("");
-
-}
-
-function go(p){
-
-  page=p;
-
-  nav();
-
-  $("crumb").textContent=
-    "Workspace / "+
-    pages.find(x=>x[0]==p)[1];
-
-  draw();
-
-}
-
-/* ================= DRAW ================= */
-
-function draw(){
-
-  $("user").textContent=S.name;
-
-  $("app").innerHTML=
-    ({
-      overview,
-      resources,
-      workflows,
-      upgrades,
-      crisis,
-      ai
-    })[page]();
-
-}
-
-/* ================= SETTINGS ================= */
-
-function settings(first=false){
-
-  modal(
-    first ? "Create your lab" : "Workspace settings",
-
-    `
-      <label>Your name</label>
-
-      <input
-        id="n"
-        value="${esc(S.name)}"
-        placeholder="Your name">
-
-      <label>Lab name</label>
-
-      <input
-        id="l"
-        value="${esc(S.lab)}"
-        placeholder="e.g. Materials Lab">
-
-      <label>Is there a crisis right now?</label>
-
-      <select id="ce">
-
-        <option value="false"
-          ${!S.crisisEnabled?"selected":""}>
-          No
-        </option>
-
-        <option value="true"
-          ${S.crisisEnabled?"selected":""}>
-          Yes
-        </option>
-
-      </select>
-
-      <div class="actions">
-
-        <button class="btn"
-          onclick="closeM()">
-          Cancel
-        </button>
-
-        <button class="btn primary"
-          onclick="saveSettings()">
-          Save
-        </button>
-
-      </div>
-    `
-  );
-
-}
-
-function saveSettings(){
-
-  if(!n.value.trim()||!l.value.trim()){
-    toast("Name and lab are required");
-    return;
-  }
-
-  S.name=n.value.trim();
-  S.lab=l.value.trim();
-  S.crisisEnabled=ce.value==="true";
-
-  save();
-  closeM();
-  drawApp();
-
-  toast("Workspace saved");
-}
-
-/* ================= OVERVIEW ================= */
-
-function overview(){
-
-  return `
-
-    <div class="hero">
-
-      <span class="tag">
-        LIVE WORKSPACE
-      </span>
-
-      <h1>${esc(S.lab)}</h1>
-
-      <p class="muted">
-        Welcome, ${esc(S.name)}.
-        AXIOM uses your actual entries instead
-        of inventing simulation data.
-      </p>
-
-      <div class="chips">
-
-        <span class="chip">
-          ${S.resources.length} resources
-        </span>
-
-        <span class="chip">
-          ${S.workflows.length} workflows
-        </span>
-
-        <span class="chip">
-          ${S.upgrades.filter(x=>x.unlocked).length}
-          upgrades active
-        </span>
-
-        <span class="chip">
-          ${S.crisisEnabled
-            ?S.crises.length+" crises"
-            :"Crisis mode off"}
-        </span>
-
-      </div>
-
-    </div>
-
-    <div class="grid">
-
-      <div class="card">
-        <b class="big">${S.resources.length}</b>
-        <small>Resources</small>
-      </div>
-
-      <div class="card">
-        <b class="big">${S.workflows.length}</b>
-        <small>Workflows</small>
-      </div>
-
-      <div class="card">
-        <b class="big">
-          ${S.upgrades.filter(x=>x.unlocked).length}
-        </b>
-        <small>Active upgrades</small>
-      </div>
-
-      <div class="card">
-        <b class="big">
-          ${S.crisisEnabled?S.crises.length:"—"}
-        </b>
-        <small>Crisis records</small>
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-/* ================= WRAP ================= */
-
-function wrap(title,desc,body,button,cls="panel"){
-
-  return `
-
-    <div class="${cls}">
-
-      <h2>${title}</h2>
-
-      <p class="muted">${desc}</p>
-
-      <div class="tools">
-        <span></span>
-        ${button||""}
-      </div>
-
-      ${body}
-
-    </div>
-
-  `;
-
-}
-
-/* ================= RESOURCES ================= */
-
-function resources(){
-
-  let body=S.resources.length?
-
-  `
-  <div class="table">
-
-    <table>
-
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Qty</th>
-        <th>Unit</th>
-        <th></th>
-      </tr>
-
-      ${S.resources.map((x,i)=>`
-
-        <tr>
-
-          <td><b>${esc(x.name)}</b></td>
-          <td>${esc(x.type)}</td>
-          <td>${x.qty}</td>
-          <td>${esc(x.unit)}</td>
-
-          <td>
-
-            <button class="btn"
-              onclick="rf(${i})">
-              Edit
-            </button>
-
-            <button class="btn danger"
-              onclick="rd(${i})">
-              Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("")}
-
-    </table>
-
-  </div>
-  `
-
-  :
-
-  `
-  <div class="empty">
-    No resources yet.
-    Add what your lab actually has.
-  </div>
-  `;
-
-  return wrap(
-    "Resources",
-    "Edit your real equipment, consumables, personnel and spaces.",
-    body,
-    `<button class="btn primary" onclick="rf()">
-      ＋ Add resource
-    </button>`
-  );
-
-}
-
-function rf(i=null){
-
-  let x=i==null
-    ?{name:"",type:"Equipment",qty:1,unit:"units"}
-    :S.resources[i];
-
-  modal(
-    i==null?"Add resource":"Edit resource",
-
-    `
-      <label>Name</label>
-      <input id="rn" value="${esc(x.name)}">
-
-      <label>Type</label>
-
-      <select id="rt">
-
-        ${[
-          "Equipment",
-          "Consumable",
-          "Personnel",
-          "Space",
-          "Other"
-        ].map(v=>`
-          <option ${v==x.type?"selected":""}>
-            ${v}
-          </option>
-        `).join("")}
-
-      </select>
-
-      <label>Quantity</label>
-      <input id="rq" type="number"
-        min="0" value="${x.qty}">
-
-      <label>Unit</label>
-      <input id="ru" value="${esc(x.unit)}">
-
-      <div class="actions">
-
-        <button class="btn"
-          onclick="closeM()">
-          Cancel
-        </button>
-
-        <button class="btn primary"
-          onclick="rs(${i??-1})">
-          Save
-        </button>
-
-      </div>
-    `
-  );
-
-}
-
-function rs(i){
-
-  let x={
-    name:rn.value.trim(),
-    type:rt.value,
-    qty:Number(rq.value),
-    unit:ru.value.trim()||"units"
-  };
-
-  if(!x.name){
-    toast("Name required");
-    return;
-  }
-
-  i<0?S.resources.push(x):S.resources[i]=x;
-
-  save();
-  closeM();
-  draw();
-
-  toast("Resource saved");
-}
-
-function rd(i){
-
-  if(confirm("Delete resource?")){
-    S.resources.splice(i,1);
-    save();
-    draw();
-  }
-
-}
-
-/* ================= WORKFLOWS ================= */
-
-function workflows(){
-
-  let body=S.workflows.length?
-
-  `
-  <div class="table">
-
-    <table>
-
-      <tr>
-        <th>Workflow</th>
-        <th>Goal</th>
-        <th>Priority</th>
-        <th>Owner</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
-
-      ${S.workflows.map((x,i)=>`
-
-        <tr>
-
-          <td><b>${esc(x.name)}</b></td>
-          <td>${esc(x.goal)}</td>
-          <td>${x.priority}</td>
-          <td>${esc(x.owner)}</td>
-
-          <td>
-            <span class="pill">
-              ${x.status}
-            </span>
-          </td>
-
-          <td>
-
-            <button class="btn"
-              onclick="wf(${i})">
-              Edit
-            </button>
-
-            <button class="btn danger"
-              onclick="wd(${i})">
-              Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("")}
-
-    </table>
-
-  </div>
-  `
-
-  :
-
-  `
-  <div class="empty">
-    No workflows yet.
-  </div>
-  `;
-
-  return wrap(
-    "Workflows",
-    "Create and manage the processes your lab really performs.",
-    body,
-    `<button class="btn primary" onclick="wf()">
-      ＋ New workflow
-    </button>`
-  );
-
-}
-
-function wf(i=null){
-
-  let x=i==null
-    ?{
-      name:"",
-      goal:"",
-      owner:"",
-      priority:"Medium",
-      status:"Queued",
-      steps:""
-    }
-    :S.workflows[i];
-
-  modal(
-    i==null?"New workflow":"Edit workflow",
-
-    `
-      <label>What work needs to be done?</label>
-      <input id="wn" value="${esc(x.name)}">
-
-      <label>What is the goal?</label>
-      <textarea id="wg">${esc(x.goal)}</textarea>
-
-      <label>Owner</label>
-      <input id="wo" value="${esc(x.owner)}">
-
-      <label>Priority</label>
-
-      <select id="wp">
-
-        ${["Low","Medium","High"].map(v=>`
-          <option ${v==x.priority?"selected":""}>
-            ${v}
-          </option>
-        `).join("")}
-
-      </select>
-
-      <label>Status</label>
-
-      <select id="ws">
-
-        ${["Queued","Active","Complete","Paused"].map(v=>`
-          <option ${v==x.status?"selected":""}>
-            ${v}
-          </option>
-        `).join("")}
-
-      </select>
-
-      <label>Steps / procedure</label>
-      <textarea id="wst">${esc(x.steps)}</textarea>
-
-      <div class="actions">
-
-        <button class="btn"
-          onclick="closeM()">
-          Cancel
-        </button>
-
-        <button class="btn primary"
-          onclick="wfs(${i??-1})">
-          Save workflow
-        </button>
-
-      </div>
-    `
-  );
-
-}
-
-function wfs(i){
-
-  let x={
-    name:wn.value.trim(),
-    goal:wg.value.trim(),
-    owner:wo.value.trim(),
-    priority:wp.value,
-    status:ws.value,
-    steps:wst.value.trim()
-  };
-
-  if(!x.name||!x.goal||!x.owner){
-    toast("Task, goal and owner required");
-    return;
-  }
-
-  i<0?S.workflows.push(x):S.workflows[i]=x;
-
-  save();
-  closeM();
-  draw();
-
-  toast("Workflow saved");
-}
-
-function wd(i){
-
-  if(confirm("Delete workflow?")){
-    S.workflows.splice(i,1);
-    save();
-    draw();
-  }
-
-}
-
-/* ================= UPGRADES ================= */
-
-function upgrades(){
-
-  let body=S.upgrades.length?
-
-  `
-  <div class="grid">
-
-    ${S.upgrades.map((x,i)=>`
-
-      <div class="card">
-
-        <span class="pill ${x.unlocked?"green":""}">
-          ${x.unlocked?"UNLOCKED":"LOCKED"}
-        </span>
-
-        <h3>${esc(x.name)}</h3>
-
-        <p class="muted">
-          ${esc(x.description)}
-        </p>
-
-        <small>
-          Requirement:
-          ${esc(x.requirement||"Not specified")}
-          <br>
-          Cost:
-          ${esc(x.cost||"Not specified")}
-        </small>
-
-        <br><br>
-
-        <button
-          class="btn ${x.unlocked?"":"primary"}"
-          onclick="ut(${i})">
-          ${x.unlocked?"Lock":"Unlock"}
-        </button>
-
-        <button
-          class="btn danger"
-          onclick="ud(${i})">
-          Delete
-        </button>
-
-      </div>
-
-    `).join("")}
-
-  </div>
-  `
-
-  :
-
-  `
-  <div class="empty">
-    No upgrades defined.
-  </div>
-  `;
-
-  return wrap(
-    "Upgrades",
-    "Unlocking always requires your confirmation.",
-    body,
-    `<button class="btn primary" onclick="uf()">
-      ＋ Add upgrade
-    </button>`
-  );
-
-}
-
-function uf(){
-
-  modal(
-    "Add upgrade",
-
-    `
-      <label>Name</label>
-      <input id="un">
-
-      <label>Description</label>
-      <textarea id="ux"></textarea>
-
-      <label>Requirement</label>
-      <input id="ur">
-
-      <label>Cost / budget</label>
-      <input id="uc">
-
-      <div class="actions">
-
-        <button class="btn"
-          onclick="closeM()">
-          Cancel
-        </button>
-
-        <button class="btn primary"
-          onclick="us()">
-          Add
-        </button>
-
-      </div>
-    `
-  );
-
-}
-
-function us(){
-
-  if(!un.value.trim()){
-    toast("Name required");
-    return;
-  }
-
-  S.upgrades.push({
-    name:un.value.trim(),
-    description:ux.value.trim(),
-    requirement:ur.value.trim(),
-    cost:uc.value.trim(),
-    unlocked:false
-  });
-
-  save();
-  closeM();
-  draw();
-}
-
-function ut(i){
-
-  if(
-    !S.upgrades[i].unlocked &&
-    !confirm("Unlock this upgrade?")
-  ) return;
-
-  S.upgrades[i].unlocked=
-    !S.upgrades[i].unlocked;
-
-  save();
-  draw();
-}
-
-function ud(i){
-
-  if(confirm("Delete upgrade?")){
-    S.upgrades.splice(i,1);
-    save();
-    draw();
-  }
-
-}
-
-/* ================= CRISIS ================= */
-
-function crisis(){
-
-  if(!S.crisisEnabled){
-
-    return wrap(
-      "Crisis Center",
-      "Crisis mode is currently off.",
-      `
-        <div class="empty">
-          If a crisis happens,
-          enable crisis mode and add the incident yourself.
+        <div class="crisis-list-mini" id="overviewCrises">
         </div>
-      `,
-      `
-        <button class="btn primary"
-          onclick="
-            S.crisisEnabled=true;
-            save();
-            draw()
-          ">
-          Enable crisis mode
-        </button>
-      `
-    );
 
-  }
+      </div>
 
-  let body=S.crises.length?
+    </section>
 
-  `
-  <div class="table">
 
-    <table>
+    <!-- ===================================================
+         RESOURCES
+         =================================================== -->
 
-      <tr>
-        <th>Crisis</th>
-        <th>Severity</th>
-        <th>Situation</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
+    <section class="page" data-section="resources" hidden>
 
-      ${S.crises.map((x,i)=>`
+      <div class="page-head">
 
-        <tr>
+        <div>
+          <div class="eyebrow">02 / Inventory</div>
+          <h1>Resources</h1>
+        </div>
 
-          <td><b>${esc(x.name)}</b></td>
-          <td>${x.severity}</td>
-          <td>${esc(x.situation)}</td>
-
-          <td>
-            <span class="pill ${
-              x.status=="Resolved"?"green":"red"
-            }">
-              ${x.status}
-            </span>
-          </td>
-
-          <td>
-
-            <button class="btn"
-              onclick="cf(${i})">
-              Edit
-            </button>
-
-            <button class="btn danger"
-              onclick="cd(${i})">
-              Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("")}
-
-    </table>
-
-  </div>
-  `
-
-  :
-
-  `
-  <div class="empty">
-    No crises recorded.
-  </div>
-  `;
-
-  return wrap(
-    "Crisis Center",
-    "Add, edit, resolve and delete real incidents.",
-    body,
-    `<button class="btn primary" onclick="cf()">
-      ＋ Add crisis
-    </button>`
-  );
-
-}
-
-function cf(i=null){
-
-  let x=i==null
-    ?{
-      name:"",
-      severity:"Medium",
-      situation:"",
-      status:"Open"
-    }
-    :S.crises[i];
-
-  modal(
-    i==null?"Add crisis":"Edit crisis",
-
-    `
-      <label>What happened?</label>
-      <input id="cn" value="${esc(x.name)}">
-
-      <label>Severity</label>
-
-      <select id="cs">
-
-        ${[
-          "Low",
-          "Medium",
-          "High",
-          "Critical"
-        ].map(v=>`
-          <option ${v==x.severity?"selected":""}>
-            ${v}
-          </option>
-        `).join("")}
-
-      </select>
-
-      <label>Situation</label>
-      <textarea id="ci">${esc(x.situation)}</textarea>
-
-      <label>Status</label>
-
-      <select id="ct">
-
-        <option ${x.status=="Open"?"selected":""}>
-          Open
-        </option>
-
-        <option ${x.status=="Resolved"?"selected":""}>
-          Resolved
-        </option>
-
-      </select>
-
-      <div class="actions">
-
-        <button class="btn"
-          onclick="closeM()">
-          Cancel
-        </button>
-
-        <button class="btn primary"
-          onclick="cfs(${i??-1})">
-          Save crisis
+        <button class="btn primary" id="resourceAddBtn">
+          + Add Resource
         </button>
 
       </div>
-    `
-  );
 
-}
 
-function cfs(i){
+      <div class="toolbar">
 
-  let x={
-    name:cn.value.trim(),
-    severity:cs.value,
-    situation:ci.value.trim(),
-    status:ct.value
-  };
+        <input
+          class="input search"
+          id="resourceSearch"
+          placeholder="Search resources..."
+        >
 
-  if(!x.name||!x.situation){
-    toast("Title and situation required");
-    return;
-  }
+        <select
+          id="resourceFilter"
+          style="width:180px">
+          <option value="all">All Status</option>
+          <option value="available">Available</option>
+          <option value="low">Low</option>
+          <option value="critical">Critical</option>
+        </select>
 
-  i<0?S.crises.push(x):S.crises[i]=x;
+      </div>
 
-  save();
-  closeM();
-  draw();
-}
 
-function cd(i){
+      <div class="panel table-wrap">
 
-  if(confirm("Delete crisis?")){
-    S.crises.splice(i,1);
-    save();
-    draw();
-  }
+        <table>
 
-}
+          <thead>
+            <tr>
+              <th>Resource</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-/* ================= AI CHAT ================= */
+          <tbody id="resourceTable">
+          </tbody>
 
-function ai(){
+        </table>
 
-  if(!Array.isArray(S.chat)){
-    S.chat=[];
-  }
+      </div>
 
-  let messages=S.chat.length
+    </section>
 
-    ?S.chat.map((x,i)=>`
+
+    <!-- ===================================================
+         WORKFLOWS
+         =================================================== -->
+
+    <section class="page" data-section="workflows" hidden>
+
+      <div class="page-head">
+
+        <div>
+          <div class="eyebrow">03 / Operations</div>
+          <h1>Workflows</h1>
+        </div>
+
+        <button class="btn primary" id="workflowAddBtn">
+          + New Workflow
+        </button>
+
+      </div>
 
       <div
-        class="msg ${x.role==="user"?"me":"bot"} ${
-          x.thinking?"thinking":""
-        }"
-        id="msg-${i}">
-
-        ${esc(x.text)}
-
+        class="workflow-board"
+        id="workflowBoard">
       </div>
 
-    `).join("")
+    </section>
 
-    :`
-      <div class="msg bot">
-        Hi ${esc(S.name)}. Ask me about your lab
-        operations, workflows, resources, upgrades,
-        or research.
-      </div>
-    `;
 
-  return wrap(
-    "AI Advisor",
-    "Ask your own question — every response gets its own chat bubble.",
+    <!-- ===================================================
+         UPGRADES
+         =================================================== -->
 
-    `
-      <div class="card chat">
+    <section class="page" data-section="upgrades" hidden>
 
-        <div class="msgs" id="msgs">
-          ${messages}
+      <div class="page-head">
+
+        <div>
+          <div class="eyebrow">04 / Intelligence</div>
+          <h1>Upgrade System</h1>
         </div>
 
-        <div class="chatbar">
+      </div>
 
-          <input
-            id="q"
-            placeholder="Ask your question…"
-            autocomplete="off">
+      <div
+        class="upgrade-grid"
+        id="upgradeGrid">
+      </div>
 
-          <button
-            class="btn primary"
-            onclick="ask()">
-            Ask →
+    </section>
+
+
+    <!-- ===================================================
+         CRISIS
+         =================================================== -->
+
+    <section class="page" data-section="crisis" hidden>
+
+      <div class="page-head">
+
+        <div>
+          <div class="eyebrow">05 / Emergency</div>
+          <h1>Crisis Center</h1>
+        </div>
+
+        <button class="btn danger" id="crisisAddBtn">
+          + Report Crisis
+        </button>
+
+      </div>
+
+      <div
+        class="crisis-grid"
+        id="crisisList">
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         AI ASSISTANT
+         =================================================== -->
+
+    <section class="page" data-section="assistant" hidden>
+
+      <div class="page-head">
+
+        <div>
+          <div class="eyebrow">06 / Intelligence</div>
+          <h1>AI Assistant</h1>
+        </div>
+
+      </div>
+
+
+      <div class="panel chat">
+
+        <div class="messages" id="messages">
+
+          <div class="message ai">
+            AXIOM online. I can analyze your resources,
+            workflows, upgrades and active operational crises.
+          </div>
+
+        </div>
+
+
+        <div class="suggestions">
+
+          <button class="suggestion">
+            What needs attention?
+          </button>
+
+          <button class="suggestion">
+            Which resources are critical?
+          </button>
+
+          <button class="suggestion">
+            Summarize operations
           </button>
 
         </div>
 
+
+        <form class="chat-form" id="chatForm">
+
+          <input
+            class="input"
+            id="chatInput"
+            placeholder="Ask AXIOM anything..."
+            autocomplete="off"
+          >
+
+          <button class="btn primary">
+            Send →
+          </button>
+
+        </form>
+
       </div>
-    `,
-    ""
-  );
 
-}
+    </section>
 
-/* ================= ASK ================= */
+  </main>
 
-async function ask(){
+</section>
 
-  let input=$("q");
 
-  let q=input.value.trim();
+<!-- =======================================================
+     RESOURCE MODAL
+     ======================================================= -->
 
-  if(!q)return;
+<div class="modal" id="resourceModal">
 
-  /*
-    IMPORTANT:
-    Every question creates its OWN object.
-    Therefore Thinking cannot overwrite
-    another answer.
-  */
+  <div class="modal-box">
 
-  let index=S.chat.length;
+    <div class="modal-head">
 
-  S.chat.push({
-    role:"user",
-    text:q,
-    thinking:false
-  });
+      <div>
+        <div class="eyebrow">Resource Control</div>
+        <h2>Add Resource</h2>
+      </div>
 
-  let thinkingIndex=S.chat.length;
+      <button
+        class="close"
+        data-close="resourceModal">
+        ×
+      </button>
 
-  S.chat.push({
-    role:"assistant",
-    text:"Thinking…",
-    thinking:true
-  });
+    </div>
 
-  save();
 
-  draw();
+    <form id="resourceForm" class="form-grid">
 
-  input=$("q");
+      <div class="field">
+        <label>Resource Name</label>
+        <input
+          class="input"
+          id="rName"
+          required
+          placeholder="e.g. Oscilloscope">
+      </div>
 
-  input.focus();
+      <div class="field">
+        <label>Category</label>
+        <input
+          class="input"
+          id="rCategory"
+          required
+          placeholder="e.g. Electronics">
+      </div>
 
-  let m=$("msgs");
+      <div class="field">
+        <label>Quantity</label>
+        <input
+          class="input"
+          id="rQty"
+          type="number"
+          min="0"
+          required
+          placeholder="0">
+      </div>
 
-  m.scrollTop=m.scrollHeight;
+      <div class="field">
+        <label>Status</label>
+        <select id="rStatus">
+          <option value="available">Available</option>
+          <option value="low">Low</option>
+          <option value="critical">Critical</option>
+        </select>
+      </div>
 
-  let context=JSON.stringify({
-    lab:S.lab,
-    resources:S.resources,
-    workflows:S.workflows,
-    upgrades:S.upgrades,
-    crises:S.crises
-  });
+      <div class="form-actions">
 
-  try{
+        <button
+          type="button"
+          class="btn"
+          data-close="resourceModal">
+          Cancel
+        </button>
 
-    let r=await fetch(
-      "/api/ai",
-      {
-        method:"POST",
+        <button
+          type="submit"
+          class="btn primary">
+          Add Resource
+        </button>
 
-        headers:{
-          "Content-Type":"application/json"
-        },
+      </div>
 
-        body:JSON.stringify({
-          question:q,
-          context
-        })
-      }
-    );
+    </form>
 
-    let d=await r.json();
+  </div>
 
-    S.chat[thinkingIndex]={
-      role:"assistant",
-      text:d.answer||d.error||"No response",
-      thinking:false
-    };
+</div>
 
-    save();
 
-    draw();
+<!-- =======================================================
+     WORKFLOW MODAL
+     ======================================================= -->
 
-    $("msgs").scrollTop=$("msgs").scrollHeight;
+<div class="modal" id="workflowModal">
 
-  }catch(e){
+  <div class="modal-box">
 
-    S.chat[thinkingIndex]={
-      role:"assistant",
-      text:
-        "Could not reach the AI server. Start the backend and check your API configuration.",
-      thinking:false
-    };
+    <div class="modal-head">
 
-    save();
+      <div>
+        <div class="eyebrow">Workflow Control</div>
+        <h2>New Workflow</h2>
+      </div>
 
-    draw();
+      <button
+        class="close"
+        data-close="workflowModal">
+        ×
+      </button>
 
-  }
+    </div>
 
-}
 
-/* ================= ENTER KEY ================= */
+    <form id="workflowForm" class="form-grid">
 
-document.addEventListener(
-  "keydown",
-  function(e){
+      <div class="field">
+        <label>Workflow Name</label>
+        <input
+          class="input"
+          id="wName"
+          required
+          placeholder="Workflow name">
+      </div>
 
-    if(
-      e.key==="Enter" &&
-      !e.shiftKey &&
-      document.activeElement &&
-      document.activeElement.id==="q"
-    ){
+      <div class="field">
+        <label>Description</label>
+        <textarea
+          id="wDescription"
+          placeholder="Describe the workflow...">
+        </textarea>
+      </div>
 
-      e.preventDefault();
+      <div class="field">
+        <label>Owner</label>
+        <input
+          class="input"
+          id="wOwner"
+          required
+          placeholder="Team / Owner">
+      </div>
 
-      ask();
+      <div class="field">
+        <label>Stage</label>
+        <select id="wStage">
+          <option value="queued">Queued</option>
+          <option value="active">Active</option>
+          <option value="review">Review</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
 
+      <div class="form-actions">
+
+        <button
+          type="button"
+          class="btn"
+          data-close="workflowModal">
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="btn primary">
+          Create Workflow
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     CRISIS MODAL
+     ======================================================= -->
+
+<div class="modal" id="crisisModal">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <div>
+        <div class="eyebrow">Emergency Control</div>
+        <h2>Report Crisis</h2>
+      </div>
+
+      <button
+        class="close"
+        data-close="crisisModal">
+        ×
+      </button>
+
+    </div>
+
+
+    <form id="crisisForm" class="form-grid">
+
+      <div class="field">
+        <label>Incident Title</label>
+        <input
+          class="input"
+          id="cTitle"
+          required
+          placeholder="Incident title">
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea
+          id="cDescription"
+          required
+          placeholder="Describe the incident...">
+        </textarea>
+      </div>
+
+      <div class="field">
+        <label>Priority</label>
+        <select id="cPriority">
+          <option value="amber">Amber</option>
+          <option value="coral">Critical</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+
+        <button
+          type="button"
+          class="btn"
+          data-close="crisisModal">
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="btn danger">
+          Report Crisis
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     TOAST
+     ======================================================= -->
+
+<div class="toast" id="toast">
+
+  <span class="toast-dot"></span>
+
+  <span id="toastText">
+    Operation complete
+  </span>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   AXIOM STATE
+   ========================================================= */
+
+const state = {
+
+  resources:[
+    {
+      id:1,
+      name:"Oscilloscope",
+      category:"Electronics",
+      qty:12,
+      status:"available"
+    },
+    {
+      id:2,
+      name:"Signal Generator",
+      category:"Electronics",
+      qty:4,
+      status:"low"
+    },
+    {
+      id:3,
+      name:"Thermal Sensor",
+      category:"Sensors",
+      qty:2,
+      status:"critical"
+    },
+    {
+      id:4,
+      name:"Optical Bench",
+      category:"Optics",
+      qty:7,
+      status:"available"
     }
+  ],
 
-  }
-);
+  workflows:[
+    {
+      id:1,
+      name:"Sensor Calibration",
+      description:"Calibrate environmental sensors.",
+      owner:"R&D Team",
+      stage:"active"
+    },
+    {
+      id:2,
+      name:"Sample Analysis",
+      description:"Process incoming laboratory samples.",
+      owner:"Analysis Unit",
+      stage:"queued"
+    },
+    {
+      id:3,
+      name:"Equipment Audit",
+      description:"Verify equipment availability.",
+      owner:"Operations",
+      stage:"review"
+    },
+    {
+      id:4,
+      name:"Archive Migration",
+      description:"Move completed records.",
+      owner:"Data Team",
+      stage:"completed"
+    }
+  ],
 
-/* ================= MODAL ================= */
+  upgrades:[
+    {
+      id:1,
+      name:"Predictive Maintenance",
+      description:"Detect equipment maintenance requirements before failure.",
+      cost:120,
+      active:true
+    },
+    {
+      id:2,
+      name:"Automated Inventory",
+      description:"Automatically track resource consumption and availability.",
+      cost:90,
+      active:false
+    },
+    {
+      id:3,
+      name:"Crisis Prediction",
+      description:"Identify patterns that could lead to operational incidents.",
+      cost:150,
+      active:false
+    },
+    {
+      id:4,
+      name:"Workflow Optimizer",
+      description:"Optimize task allocation across operational teams.",
+      cost:110,
+      active:true
+    }
+  ],
 
-function modal(t,b){
-
-  $("dialog").innerHTML=
-    `<h3>${t}</h3>${b}`;
-
-  $("modal").classList.add("show");
-
-}
-
-function closeM(){
-
-  $("modal").classList.remove("show");
-
-}
-
-$("modal").onclick=e=>{
-
-  if(e.target.id==="modal"){
-    closeM();
-  }
+  crises:[
+    {
+      id:1,
+      title:"Thermal Sensor Stock Critical",
+      description:"Only 2 thermal sensors remain available.",
+      priority:"coral"
+    },
+    {
+      id:2,
+      title:"Signal Generator Low Stock",
+      description:"Inventory below recommended operational threshold.",
+      priority:"amber"
+    }
+  ]
 
 };
 
-/* ================= START ================= */
 
-/*
-  Every fresh browser session starts
-  with the Enter Lab screen.
-*/
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-if(sessionStorage.getItem("axiom_entered")==="yes"){
-  drawApp();
-}else{
-  landing();
+const landing = document.getElementById("landing");
+const app = document.getElementById("app");
+const sidebar = document.getElementById("sidebar");
+
+
+/* =========================================================
+   ENTER APP
+   ========================================================= */
+
+document
+  .getElementById("enterBtn")
+  .addEventListener("click",()=>{
+
+    landing.hidden = true;
+    app.hidden = false;
+
+    document.body.classList.add("inapp");
+
+    showPage("overview");
+
+    toast("AXIOM command environment online.");
+
+  });
+
+
+/* =========================================================
+   PAGE NAVIGATION
+   ========================================================= */
+
+function showPage(name){
+
+  document
+    .querySelectorAll("[data-section]")
+    .forEach(section=>{
+
+      section.hidden =
+        section.dataset.section !== name;
+
+    });
+
+
+  document
+    .querySelectorAll(".gbtn")
+    .forEach(btn=>{
+
+      btn.classList.toggle(
+        "on",
+        btn.dataset.page === name
+      );
+
+    });
+
+
+  const depth = {
+    overview:0,
+    resources:1,
+    workflows:2,
+    upgrades:3,
+    crisis:4,
+    assistant:5
+  };
+
+  document.body.dataset.depth =
+    depth[name] ?? 0;
+
+
+  sidebar.classList.remove("open");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
 }
+
+
+document
+  .querySelectorAll(".gbtn")
+  .forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+      showPage(btn.dataset.page);
+
+    });
+
+  });
+
+
+document
+  .querySelectorAll("[data-go]")
+  .forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+      showPage(btn.dataset.go);
+
+    });
+
+  });
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+document
+  .getElementById("menuBtn")
+  .addEventListener("click",()=>{
+
+    sidebar.classList.toggle("open");
+
+  });
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(id){
+
+  document
+    .getElementById(id)
+    .classList.add("show");
+
+}
+
+function closeModal(id){
+
+  document
+    .getElementById(id)
+    .classList.remove("show");
+
+}
+
+
+document
+  .querySelectorAll("[data-close]")
+  .forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+      closeModal(btn.dataset.close);
+
+    });
+
+  });
+
+
+document
+  .querySelectorAll(".modal")
+  .forEach(modal=>{
+
+    modal.addEventListener("click",e=>{
+
+      if(e.target === modal){
+
+        modal.classList.remove("show");
+
+      }
+
+    });
+
+  });
+
+
+document.addEventListener("keydown",e=>{
+
+  if(e.key === "Escape"){
+
+    document
+      .querySelectorAll(".modal.show")
+      .forEach(modal=>{
+        modal.classList.remove("show");
+      });
+
+  }
+
+});
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+document
+  .getElementById("quickBtn")
+  .addEventListener("click",()=>{
+
+    openModal("resourceModal");
+
+  });
+
+
+document
+  .getElementById("overviewAddBtn")
+  .addEventListener("click",()=>{
+
+    openModal("resourceModal");
+
+  });
+
+
+document
+  .getElementById("resourceAddBtn")
+  .addEventListener("click",()=>{
+
+    openModal("resourceModal");
+
+  });
+
+
+document
+  .getElementById("workflowAddBtn")
+  .addEventListener("click",()=>{
+
+    openModal("workflowModal");
+
+  });
+
+
+document
+  .getElementById("crisisAddBtn")
+  .addEventListener("click",()=>{
+
+    openModal("crisisModal");
+
+  });
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+let toastTimer;
+
+function toast(message){
+
+  const el = document.getElementById("toast");
+  const text = document.getElementById("toastText");
+
+  text.textContent = message;
+
+  el.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(()=>{
+
+    el.classList.remove("show");
+
+  },2600);
+
+}
+
+
+/* =========================================================
+   RESOURCE HELPERS
+   ========================================================= */
+
+function statusLabel(status){
+
+  return status.charAt(0).toUpperCase() +
+         status.slice(1);
+
+}
+
+
+function renderResources(){
+
+  const table =
+    document.getElementById("resourceTable");
+
+  const search =
+    document
+      .getElementById("resourceSearch")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const filter =
+    document.getElementById("resourceFilter").value;
+
+
+  const items =
+    state.resources.filter(resource=>{
+
+      const matchesSearch =
+        resource.name
+          .toLowerCase()
+          .includes(search) ||
+
+        resource.category
+          .toLowerCase()
+          .includes(search);
+
+      const matchesFilter =
+        filter === "all" ||
+        resource.status === filter;
+
+      return matchesSearch && matchesFilter;
+
+    });
+
+
+  if(!items.length){
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="5"
+            style="text-align:center;padding:40px;color:var(--dim)">
+          No resources found.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  table.innerHTML =
+    items.map(resource=>`
+
+      <tr>
+
+        <td>
+          <strong>${escapeHTML(resource.name)}</strong>
+        </td>
+
+        <td>
+          ${escapeHTML(resource.category)}
+        </td>
+
+        <td>
+          ${resource.qty}
+        </td>
+
+        <td>
+          <span class="pill ${resource.status}">
+            ${statusLabel(resource.status)}
+          </span>
+        </td>
+
+        <td>
+
+          <button
+            class="btn small"
+            onclick="deleteResource(${resource.id})">
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+
+function deleteResource(id){
+
+  state.resources =
+    state.resources.filter(
+      resource=>resource.id !== id
+    );
+
+  renderAll();
+
+  toast("Resource removed.");
+
+}
+
+
+/* =========================================================
+   RESOURCE FORM
+   ========================================================= */
+
+document
+  .getElementById("resourceForm")
+  .addEventListener("submit",e=>{
+
+    e.preventDefault();
+
+
+    const resource = {
+
+      id:Date.now(),
+
+      name:
+        document.getElementById("rName").value.trim(),
+
+      category:
+        document.getElementById("rCategory").value.trim(),
+
+      qty:
+        Number(document.getElementById("rQty").value),
+
+      status:
+        document.getElementById("rStatus").value
+
+    };
+
+
+    state.resources.push(resource);
+
+    e.target.reset();
+
+    closeModal("resourceModal");
+
+    renderAll();
+
+    toast("Resource added to command inventory.");
+
+  });
+
+
+document
+  .getElementById("resourceSearch")
+  .addEventListener("input",renderResources);
+
+
+document
+  .getElementById("resourceFilter")
+  .addEventListener("change",renderResources);
+
+
+/* =========================================================
+   WORKFLOWS
+   ========================================================= */
+
+const workflowStages = [
+  "queued",
+  "active",
+  "review",
+  "completed"
+];
+
+
+function renderWorkflows(){
+
+  const board =
+    document.getElementById("workflowBoard");
+
+
+  board.innerHTML =
+    workflowStages.map(stage=>{
+
+      const items =
+        state.workflows.filter(
+          workflow=>workflow.stage === stage
+        );
+
+
+      return `
+
+        <div class="workflow-col">
+
+          <div class="col-head">
+
+            <span>
+              ${stage}
+            </span>
+
+            <span class="wcount">
+              ${items.length}
+            </span>
+
+          </div>
+
+
+          ${
+            items.length
+
+            ?
+
+            items.map(workflow=>`
+
+              <div class="workflow-card">
+
+                <h3>
+                  ${escapeHTML(workflow.name)}
+                </h3>
+
+                <p>
+                  ${escapeHTML(workflow.description)}
+                </p>
+
+                <div class="workflow-meta">
+
+                  <span class="workflow-owner">
+                    ${escapeHTML(workflow.owner)}
+                  </span>
+
+                  <div style="display:flex;gap:5px">
+
+                    ${
+                      stage !== "completed"
+
+                      ?
+
+                      `<button
+                        class="btn small"
+                        onclick="advanceWorkflow(${workflow.id})">
+                        →
+                      </button>`
+
+                      : ""
+
+                    }
+
+                    <button
+                      class="btn small"
+                      onclick="deleteWorkflow(${workflow.id})">
+                      ×
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            `).join("")
+
+            :
+
+            `<div style="
+              color:var(--dim);
+              font-size:10px;
+              padding:20px 4px">
+              No workflows
+            </div>`
+
+          }
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function advanceWorkflow(id){
+
+  const workflow =
+    state.workflows.find(
+      item=>item.id === id
+    );
+
+  if(!workflow) return;
+
+
+  const index =
+    workflowStages.indexOf(workflow.stage);
+
+  if(index < workflowStages.length - 1){
+
+    workflow.stage =
+      workflowStages[index + 1];
+
+  }
+
+  renderAll();
+
+  toast("Workflow advanced.");
+
+}
+
+
+function deleteWorkflow(id){
+
+  state.workflows =
+    state.workflows.filter(
+      workflow=>workflow.id !== id
+    );
+
+  renderAll();
+
+  toast("Workflow removed.");
+
+}
+
+
+/* =========================================================
+   WORKFLOW FORM
+   ========================================================= */
+
+document
+  .getElementById("workflowForm")
+  .addEventListener("submit",e=>{
+
+    e.preventDefault();
+
+
+    state.workflows.push({
+
+      id:Date.now(),
+
+      name:
+        document.getElementById("wName").value.trim(),
+
+      description:
+        document
+          .getElementById("wDescription")
+          .value.trim(),
+
+      owner:
+        document
+          .getElementById("wOwner")
+          .value.trim(),
+
+      stage:
+        document.getElementById("wStage").value
+
+    });
+
+
+    e.target.reset();
+
+    closeModal("workflowModal");
+
+    renderAll();
+
+    toast("New workflow created.");
+
+  });
+
+
+/* =========================================================
+   UPGRADES
+   ========================================================= */
+
+function renderUpgrades(){
+
+  const grid =
+    document.getElementById("upgradeGrid");
+
+
+  grid.innerHTML =
+    state.upgrades.map(upgrade=>`
+
+      <div class="card upgrade">
+
+        <div class="upgrade-top">
+
+          <div class="upgrade-icon">
+            ✦
+          </div>
+
+          <button
+            class="toggle ${upgrade.active ? "active" : ""}"
+            onclick="toggleUpgrade(${upgrade.id})"
+            aria-label="Toggle upgrade">
+          </button>
+
+        </div>
+
+        <h3>
+          ${escapeHTML(upgrade.name)}
+        </h3>
+
+        <p>
+          ${escapeHTML(upgrade.description)}
+        </p>
+
+        <div
+          class="cost"
+          style="margin-top:20px">
+          COST · ${upgrade.cost} OPS
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+function toggleUpgrade(id){
+
+  const upgrade =
+    state.upgrades.find(
+      item=>item.id === id
+    );
+
+  if(!upgrade) return;
+
+
+  upgrade.active = !upgrade.active;
+
+  renderAll();
+
+  toast(
+    upgrade.active
+      ? `${upgrade.name} activated.`
+      : `${upgrade.name} deactivated.`
+  );
+
+}
+
+
+/* =========================================================
+   CRISIS
+   ========================================================= */
+
+function renderCrises(){
+
+  const list =
+    document.getElementById("crisisList");
+
+
+  if(!state.crises.length){
+
+    list.innerHTML = `
+
+      <div class="panel"
+           style="padding:40px;text-align:center">
+
+        <div class="eyebrow">
+          SYSTEM CLEAR
+        </div>
+
+        <h2>
+          No active crises.
+        </h2>
+
+        <p class="muted"
+           style="margin-top:8px">
+          Operational environment currently stable.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  list.innerHTML =
+    state.crises.map(crisis=>`
+
+      <div class="crisis-item ${crisis.priority}">
+
+        <div class="crisis-info">
+
+          <div class="pill ${crisis.priority}">
+            ${crisis.priority === "coral"
+              ? "Critical"
+              : "Warning"}
+          </div>
+
+          <h3 style="margin-top:10px">
+            ${escapeHTML(crisis.title)}
+          </h3>
+
+          <p>
+            ${escapeHTML(crisis.description)}
+          </p>
+
+        </div>
+
+        <button
+          class="btn small"
+          onclick="resolveCrisis(${crisis.id})">
+          Resolve
+        </button>
+
+      </div>
+
+    `).join("");
+
+
+  renderOverviewCrises();
+
+}
+
+
+function resolveCrisis(id){
+
+  state.crises =
+    state.crises.filter(
+      crisis=>crisis.id !== id
+    );
+
+  renderAll();
+
+  toast("Crisis resolved.");
+
+}
+
+
+/* =========================================================
+   CRISIS FORM
+   ========================================================= */
+
+document
+  .getElementById("crisisForm")
+  .addEventListener("submit",e=>{
+
+    e.preventDefault();
+
+
+    state.crises.unshift({
+
+      id:Date.now(),
+
+      title:
+        document.getElementById("cTitle").value.trim(),
+
+      description:
+        document
+          .getElementById("cDescription")
+          .value.trim(),
+
+      priority:
+        document.getElementById("cPriority").value
+
+    });
+
+
+    e.target.reset();
+
+    closeModal("crisisModal");
+
+    renderAll();
+
+    toast("Crisis reported to command.");
+
+  });
+
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
+function renderOverview(){
+
+  const total =
+    state.resources.reduce(
+      (sum,item)=>sum + Number(item.qty || 0),
+      0
+    );
+
+
+  const available =
+    state.resources.filter(
+      item=>item.status === "available"
+    ).length;
+
+  const low =
+    state.resources.filter(
+      item=>item.status === "low"
+    ).length;
+
+  const critical =
+    state.resources.filter(
+      item=>item.status === "critical"
+    ).length;
+
+
+  document.getElementById("resourceTotal")
+    .textContent = total;
+
+  document.getElementById("availableCount")
+    .textContent = available;
+
+  document.getElementById("lowCount")
+    .textContent = low;
+
+  document.getElementById("criticalCount")
+    .textContent = critical;
+
+
+  const segments =
+    document.getElementById("resourceSegments");
+
+
+  const count =
+    Math.max(8,Math.min(18,total));
+
+
+  segments.innerHTML =
+    Array.from(
+      {length:count},
+      (_,i)=>{
+
+        const active =
+          i < Math.round(
+            count * (available / Math.max(1,state.resources.length))
+          );
+
+        return `<i class="${active ? "active" : ""}"></i>`;
+
+      }
+    ).join("");
+
+
+  const activeUpgrades =
+    state.upgrades.filter(
+      upgrade=>upgrade.active
+    ).length;
+
+
+  document.getElementById("upgradeCount")
+    .textContent = activeUpgrades;
+
+
+  const workflowTotal =
+    state.workflows.length;
+
+  const completed =
+    state.workflows.filter(
+      workflow=>workflow.stage === "completed"
+    ).length;
+
+  const workflowPercent =
+    workflowTotal
+      ? Math.round(
+          ((workflowTotal - completed * .35)
+          / workflowTotal) * 100
+        )
+      : 0;
+
+
+  const safePercent =
+    Math.max(0,Math.min(100,workflowPercent));
+
+
+  document.getElementById("workflowPercent")
+    .textContent = safePercent + "%";
+
+
+  const ring =
+    document.getElementById("workflowRing");
+
+  const circumference = 308;
+
+  ring.style.strokeDashoffset =
+    circumference -
+    (circumference * safePercent / 100);
+
+
+  renderOverviewCrises();
+
+}
+
+
+function renderOverviewCrises(){
+
+  const container =
+    document.getElementById("overviewCrises");
+
+
+  if(!state.crises.length){
+
+    container.innerHTML = `
+
+      <div class="crisis-mini">
+
+        <b>
+          No active incidents
+        </b>
+
+        <span style="color:var(--glow)">
+          CLEAR
+        </span>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    state.crises
+      .slice(0,4)
+      .map(crisis=>`
+
+        <div class="crisis-mini">
+
+          <b>
+            ${escapeHTML(crisis.title)}
+          </b>
+
+          <span
+            style="color:
+              ${crisis.priority === "coral"
+                ? "var(--coral)"
+                : "var(--amber)"}">
+            ${crisis.priority === "coral"
+              ? "CRITICAL"
+              : "WARNING"}
+          </span>
+
+        </div>
+
+      `)
+      .join("");
+
+}
+
+
+/* =========================================================
+   AI ASSISTANT
+   ========================================================= */
+
+function addMessage(text,type){
+
+  const messages =
+    document.getElementById("messages");
+
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "message " + type;
+
+  div.textContent = text;
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+
+}
+
+
+function assistantReply(input){
+
+  const q =
+    input.toLowerCase();
+
+
+  if(
+    q.includes("critical") ||
+    q.includes("attention") ||
+    q.includes("urgent")
+  ){
+
+    const critical =
+      state.resources.filter(
+        item=>item.status === "critical"
+      );
+
+    if(!critical.length){
+
+      return "No resources are currently marked critical.";
+
+    }
+
+    return "Critical resources: " +
+      critical
+        .map(item=>`${item.name} (${item.qty})`)
+        .join(", ") +
+      ".";
+
+  }
+
+
+  if(
+    q.includes("resource") ||
+    q.includes("inventory")
+  ){
+
+    return `AXIOM tracks ${state.resources.length} resource types with ${state.resources.reduce((a,b)=>a+b.qty,0)} total units.`;
+
+  }
+
+
+  if(
+    q.includes("workflow") ||
+    q.includes("operation")
+  ){
+
+    const active =
+      state.workflows.filter(
+        item=>item.stage === "active"
+      ).length;
+
+    return `There are ${state.workflows.length} workflows in the system, with ${active} currently active.`;
+
+  }
+
+
+  if(
+    q.includes("upgrade")
+  ){
+
+    const active =
+      state.upgrades.filter(
+        item=>item.active
+      ).length;
+
+    return `${active} intelligence upgrades are currently active.`;
+
+  }
+
+
+  if(
+    q.includes("crisis") ||
+    q.includes("incident")
+  ){
+
+    return state.crises.length
+      ? `There are ${state.crises.length} active operational incident${state.crises.length > 1 ? "s" : ""}.`
+      : "The crisis center is currently clear.";
+
+  }
+
+
+  if(
+    q.includes("summarize") ||
+    q.includes("summary")
+  ){
+
+    return `Operational summary: ${state.resources.length} resource categories, ${state.workflows.length} workflows, ${state.upgrades.filter(x=>x.active).length} active upgrades and ${state.crises.length} active crises.`;
+
+  }
+
+
+  return "I can analyze resources, workflows, upgrades and crisis conditions. Try asking what needs attention.";
+
+}
+
+
+document
+  .getElementById("chatForm")
+  .addEventListener("submit",e=>{
+
+    e.preventDefault();
+
+
+    const input =
+      document
+        .getElementById("chatInput");
+
+    const value =
+      input.value.trim();
+
+
+    if(!value) return;
+
+
+    addMessage(value,"user");
+
+    input.value = "";
+
+
+    setTimeout(()=>{
+
+      addMessage(
+        assistantReply(value),
+        "ai"
+      );
+
+    },350);
+
+  });
+
+
+document
+  .querySelectorAll(".suggestion")
+  .forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+      document
+        .getElementById("chatInput")
+        .value = btn.textContent.trim();
+
+      document
+        .getElementById("chatForm")
+        .requestSubmit();
+
+    });
+
+  });
+
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+document
+  .getElementById("profileBtn")
+  .addEventListener("click",()=>{
+
+    toast("Administrator access active.");
+
+  });
+
+
+/* =========================================================
+   SECURITY / HTML ESCAPE
+   ========================================================= */
+
+function escapeHTML(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   RENDER EVERYTHING
+   ========================================================= */
+
+function renderAll(){
+
+  renderResources();
+
+  renderWorkflows();
+
+  renderUpgrades();
+
+  renderCrises();
+
+  renderOverview();
+
+}
+
+
+/* =========================================================
+   OCEAN PARTICLE SYSTEM
+   ========================================================= */
+
+const canvas =
+  document.getElementById("sea");
+
+const ctx =
+  canvas.getContext("2d");
+
+
+let particles = [];
+
+
+function resizeCanvas(){
+
+  canvas.width =
+    window.innerWidth *
+    Math.min(window.devicePixelRatio || 1,2);
+
+  canvas.height =
+    window.innerHeight *
+    Math.min(window.devicePixelRatio || 1,2);
+
+  canvas.style.width =
+    window.innerWidth + "px";
+
+  canvas.style.height =
+    window.innerHeight + "px";
+
+}
+
+
+function createParticles(){
+
+  particles =
+    Array.from(
+      {length:90},
+      ()=>({
+
+        x:Math.random() * canvas.width,
+
+        y:Math.random() * canvas.height,
+
+        r:Math.random() * 1.8 + .3,
+
+        vx:(Math.random()-.5)*.18,
+
+        vy:(Math.random()-.5)*.18,
+
+        alpha:Math.random()*.45 + .08
+
+      })
+    );
+
+}
+
+
+function animateSea(){
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  for(const p of particles){
+
+    p.x += p.vx;
+    p.y += p.vy;
+
+
+    if(p.x < 0) p.x = canvas.width;
+    if(p.x > canvas.width) p.x = 0;
+
+    if(p.y < 0) p.y = canvas.height;
+    if(p.y > canvas.height) p.y = 0;
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      p.x,
+      p.y,
+      p.r,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle =
+      `rgba(89,255,224,${p.alpha})`;
+
+    ctx.fill();
+
+  }
+
+
+  requestAnimationFrame(animateSea);
+
+}
+
+
+window.addEventListener("resize",()=>{
+
+  resizeCanvas();
+  createParticles();
+
+});
+
+
+resizeCanvas();
+createParticles();
+animateSea();
+
+
+/* =========================================================
+   INITIAL RENDER
+   ========================================================= */
+
+renderAll();
 
 </script>
 
