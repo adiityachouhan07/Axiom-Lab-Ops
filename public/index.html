@@ -4016,5 +4016,430 @@ document.body.style.overflow = "hidden";
 
 </script>
 
+
+<!-- =========================================================
+     AXIOM LAB OPS — TRUE 3D ROBOT ASSEMBLY
+     Procedural Three.js/WebGL industrial robot
+========================================================= -->
+<style>
+  .robot-stage{isolation:isolate}
+  .real-hangar,.real-parts,.real-robot{display:none!important}
+  #axiom3DCanvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    z-index:7;pointer-events:none;
+    opacity:0;transition:opacity 1s ease;
+  }
+  #axiom3DCanvas.live{opacity:1}
+  .assembly-hud{z-index:12!important}
+  .setup-panel{z-index:20!important}
+  .identity-display{z-index:21!important}
+  .three-cinematic-vignette{
+    position:absolute;inset:0;z-index:8;pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 47%,transparent 0 35%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
+      linear-gradient(180deg,rgba(0,0,0,.34),transparent 25%,transparent 72%,rgba(0,0,0,.62));
+    mix-blend-mode:multiply;
+  }
+  .three-scanline{
+    position:absolute;inset:0;z-index:9;pointer-events:none;opacity:.13;
+    background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(170,230,255,.11) 4px,transparent 5px);
+  }
+  @media(max-width:700px){
+    #axiom3DCanvas{min-height:560px}
+  }
+</style>
+<script type="module">
+(async()=>{
+  if(window.__AXIOM_TRUE_3D__) return;
+  window.__AXIOM_TRUE_3D__=true;
+
+  const stage=document.getElementById('robotStage');
+  if(!stage) return;
+
+  const canvas=document.createElement('canvas');
+  canvas.id='axiom3DCanvas';
+  stage.appendChild(canvas);
+
+  const vignette=document.createElement('div');
+  vignette.className='three-cinematic-vignette';
+  stage.appendChild(vignette);
+
+  const scan=document.createElement('div');
+  scan.className='three-scanline';
+  stage.appendChild(scan);
+
+  let THREE;
+  try{
+    THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+  }catch(err){
+    console.warn('Three.js unavailable; preserving baseline cinematic assembly.',err);
+    return;
+  }
+
+  const {
+    Scene,PerspectiveCamera,WebGLRenderer,Group,Mesh,MeshStandardMaterial,
+    MeshPhysicalMaterial,BoxGeometry,CylinderGeometry,SphereGeometry,
+    TorusGeometry,PlaneGeometry,AmbientLight,DirectionalLight,PointLight,
+    SpotLight,Vector3,Color,MathUtils,AdditiveBlending,DoubleSide
+  }=THREE;
+
+  const renderer=new WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.05;
+
+  const scene=new Scene();
+  scene.background=new Color(0x010407);
+  scene.fog=new THREE.FogExp2(0x010407,0.055);
+
+  const camera=new PerspectiveCamera(34,1,.1,100);
+  camera.position.set(0,2.1,13.8);
+  camera.lookAt(0,2.7,0);
+
+  const ambient=new AmbientLight(0x9bb4bd,.42);
+  scene.add(ambient);
+
+  const key=new SpotLight(0xb9e9ff,1200,28,Math.PI/5,.55,1.7);
+  key.position.set(-5,9,8); key.castShadow=true; key.shadow.mapSize.set(1024,1024);
+  scene.add(key); scene.add(key.target); key.target.position.set(0,3,0);
+
+  const rim=new PointLight(0x35b9ff,80,15);
+  rim.position.set(4,5,-1); scene.add(rim);
+
+  const amber=new PointLight(0xff9b3d,35,10);
+  amber.position.set(-4,2,4); scene.add(amber);
+
+  const floorMat=new MeshStandardMaterial({color:0x080e11,metalness:.9,roughness:.32});
+  const floor=new Mesh(new PlaneGeometry(34,26),floorMat);
+  floor.rotation.x=-Math.PI/2; floor.position.y=-.15; floor.receiveShadow=true;
+  scene.add(floor);
+
+  // Hangar lines / guide rails.
+  const railMat=new MeshStandardMaterial({color:0x18252a,metalness:.85,roughness:.25});
+  for(let x=-8;x<=8;x+=2){
+    const rail=new Mesh(new BoxGeometry(.025,.012,22),railMat);
+    rail.position.set(x,-.135,0); scene.add(rail);
+  }
+  for(let z=-9;z<=9;z+=2){
+    const rail=new Mesh(new BoxGeometry(18,.012,.025),railMat);
+    rail.position.set(0,-.13,z); scene.add(rail);
+  }
+
+  const robot=new Group();
+  robot.position.y=.25;
+  scene.add(robot);
+
+  const assemblyParts=[];
+  const metal=new MeshPhysicalMaterial({
+    color:0x555f62,metalness:.94,roughness:.27,clearcoat:.32,clearcoatRoughness:.18
+  });
+  const darkMetal=new MeshPhysicalMaterial({
+    color:0x101619,metalness:.98,roughness:.22,clearcoat:.3
+  });
+  const silver=new MeshPhysicalMaterial({
+    color:0x9aa5a6,metalness:.97,roughness:.2,clearcoat:.42
+  });
+  const black=new MeshStandardMaterial({color:0x05090b,metalness:.95,roughness:.2});
+  const cyan=new MeshStandardMaterial({
+    color:0x77eaff,emissive:0x36cfff,emissiveIntensity:4,
+    metalness:.3,roughness:.18
+  });
+  const lime=new MeshStandardMaterial({
+    color:0xd7ff3f,emissive:0x8ab51f,emissiveIntensity:5,
+    metalness:.25,roughness:.16
+  });
+
+  function matClone(m){return m.clone()}
+  function addBox(g,size,pos,mat=metal,rot=[0,0,0],bevel=false){
+    const geo=new BoxGeometry(size[0],size[1],size[2],bevel?2:1,bevel?2:1,bevel?2:1);
+    const m=new Mesh(geo,matClone(mat));
+    m.position.set(...pos);m.rotation.set(...rot);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;
+  }
+  function addCyl(g,r1,r2,h,pos,mat=metal,rot=[0,0,0],radial=16){
+    const m=new Mesh(new CylinderGeometry(r1,r2,h,radial),matClone(mat));
+    m.position.set(...pos);m.rotation.set(...rot);m.castShadow=true;m.receiveShadow=true;g.add(m);return m;
+  }
+  function addSphere(g,r,pos,mat=metal){
+    const m=new Mesh(new SphereGeometry(r,20,14),matClone(mat));
+    m.position.set(...pos);m.castShadow=true;g.add(m);return m;
+  }
+
+  function part(name){
+    const g=new Group();g.name=name;robot.add(g);
+    assemblyParts.push({g,name,home:g.position.clone(),homeQ:g.quaternion.clone(),ready:false});
+    return g;
+  }
+
+  // HEAD
+  const head=part('HEAD ASSEMBLY');
+  addBox(head,[1.55,.82,1.18],[0,6.05,0],darkMetal,[0,.02,0],true);
+  addBox(head,[1.25,.25,.12],[0,6.05,.61],black,[0,0,0]);
+  addBox(head,[.92,.08,.07],[0,6.08,.68],cyan);
+  addBox(head,[.28,.18,.86],[-.83,6.05,0],metal,[0,0,.08]);
+  addBox(head,[.28,.18,.86],[.83,6.05,0],metal,[0,0,-.08]);
+  addCyl(head,.14,.14,.9,[0,5.58,0],silver,[Math.PI/2,0,0]);
+  addBox(head,[.42,.25,.65],[0,6.42,0],silver,[0,0,0],true);
+
+  // NECK
+  const neck=part('NECK / HYDRAULIC COUPLER');
+  addCyl(neck,.42,.36,.52,[0,5.45,0],darkMetal);
+  addCyl(neck,.23,.23,.65,[-.46,5.42,0],silver,[0,0,Math.PI/2]);
+  addCyl(neck,.23,.23,.65,[.46,5.42,0],silver,[0,0,Math.PI/2]);
+  for(let i=-1;i<=1;i++) addCyl(neck,.06,.06,.72,[i*.22,5.45,.12],black,[0,0,0],10);
+
+  // TORSO / REACTOR
+  const torso=part('TORSO FRAME');
+  addBox(torso,[3.15,2.45,1.25],[0,4.25,0],darkMetal,[0,0,0],true);
+  addBox(torso,[2.55,1.75,1.34],[0,4.38,.08],metal,[0,0,0],true);
+  addBox(torso,[1.65,.72,.18],[0,5.02,.72],silver,[0,0,0],true);
+  addBox(torso,[1.85,.62,.16],[0,3.35,.7],black);
+  addBox(torso,[.18,1.5,.14],[-1.45,4.25,.7],silver);
+  addBox(torso,[.18,1.5,.14],[1.45,4.25,.7],silver);
+
+  const reactor=part('NEURAL REACTOR');
+  addCyl(reactor,.62,.62,.24,[0,4.35,.78],black,[Math.PI/2,0,0],32);
+  addCyl(reactor,.43,.43,.27,[0,4.35,.92],cyan,[Math.PI/2,0,0],32);
+  addCyl(reactor,.27,.27,.29,[0,4.35,1.08],lime,[Math.PI/2,0,0],24);
+  const reactorRing=new Mesh(new TorusGeometry(.67,.035,10,48),new MeshStandardMaterial({
+    color:0x77eaff,emissive:0x27bfff,emissiveIntensity:4,metalness:.5,roughness:.2
+  }));
+  reactorRing.position.set(0,4.35,1.1);reactorRing.rotation.x=Math.PI/2;reactor.add(reactorRing);
+
+  // SHOULDERS
+  const shoulderL=part('LEFT SHOULDER');
+  const shoulderR=part('RIGHT SHOULDER');
+  for(const [g,s] of [[shoulderL,-1],[shoulderR,1]]){
+    addSphere(g,.72,[s*2.0,5.0,0],metal);
+    addBox(g,[.72,.95,1.3],[s*2.15,4.85,0],silver,[0,0,s*.18],true);
+    addBox(g,[.42,.7,.9],[s*2.45,4.85,0],darkMetal,[0,0,s*.18],true);
+  }
+
+  function makeArm(side){
+    const g=part(side<0?'LEFT ARM':'RIGHT ARM');
+    const x=side*2.55;
+    addCyl(g,.48,.38,1.65,[x,3.95,0],metal,[0,0,Math.PI/2]);
+    addBox(g,[.55,1.6,.72],[x,3.75,0],darkMetal,[0,0,side*.12],true);
+    addCyl(g,.38,.33,1.25,[x,2.72,0],silver,[0,0,Math.PI/2]);
+    addBox(g,[.65,.9,.65],[x,2.0,0],metal,[0,0,side*.08],true);
+    addCyl(g,.3,.3,.75,[x,1.55,0],black,[0,0,Math.PI/2]);
+    addBox(g,[.5,.7,.7],[x,1.1,0],darkMetal,[0,0,side*.1],true);
+    return g;
+  }
+  const armL=makeArm(-1),armR=makeArm(1);
+
+  // HIPS + LEGS
+  const hip=part('HIP FRAME');
+  addBox(hip,[2.55,.9,1.15],[0,2.75,0],metal,[0,0,0],true);
+  addCyl(hip,.42,.42,.8,[-.72,2.38,0],silver,[Math.PI/2,0,0]);
+  addCyl(hip,.42,.42,.8,[.72,2.38,0],silver,[Math.PI/2,0,0]);
+
+  function makeLeg(side){
+    const g=part(side<0?'LEFT LEG':'RIGHT LEG'),x=side*.78;
+    addBox(g,[.98,2.45,1.12],[x,1.2,0],darkMetal,[0,0,side*.04],true);
+    addBox(g,[.72,1.8,1.2],[x,.55,.03],metal,[0,0,side*.03],true);
+    addCyl(g,.33,.33,.85,[x,-.35,0],silver,[Math.PI/2,0,0]);
+    addBox(g,[1.25,.48,1.85],[x,-.75,.28],darkMetal,[0,0,side*.04],true);
+    addBox(g,[1.05,.24,1.45],[x,-.55,.98],silver,[0,0,side*.04],true);
+    return g;
+  }
+  const legL=makeLeg(-1),legR=makeLeg(1);
+
+  // FLOOR LOCK FEET
+  const footL=part('LEFT FOOT');
+  const footR=part('RIGHT FOOT');
+  for(const [g,s] of [[footL,-1],[footR,1]]){
+    addBox(g,[1.45,.48,2.25],[s*.78,-1.05,.35],darkMetal,[0,0,s*.04],true);
+    addBox(g,[1.22,.22,1.65],[s*.78,-.86,1.0],silver,[0,0,s*.04],true);
+  }
+
+  // Hydraulic rods / cables as thin cylinders.
+  function rod(a,b,r=.055,mat=silver){
+    const va=new Vector3(...a),vb=new Vector3(...b),mid=va.clone().add(vb).multiplyScalar(.5);
+    const d=vb.clone().sub(va),len=d.length();
+    const m=new Mesh(new CylinderGeometry(r,r,len,10),matClone(mat));
+    m.position.copy(mid);m.quaternion.setFromUnitVectors(new Vector3(0,1,0),d.normalize());
+    m.castShadow=true;robot.add(m);
+    return m;
+  }
+  rod([-1.72,4.72,.42],[-2.35,3.35,.42],.07);
+  rod([1.72,4.72,.42],[2.35,3.35,.42],.07);
+  rod([-.48,2.45,.38],[-.78,.35,.38],.075);
+  rod([.48,2.45,.38],[.78,.35,.38],.075);
+
+  // Back-mounted spine plates.
+  for(let i=0;i<5;i++){
+    addBox(robot,[1.55-.12*i,.22,.28],[0,5.0-i*.55,-.65],silver,[0,0,0],true);
+  }
+
+  // Initial assembly positions: parts fly in from different vectors.
+  const specs={
+    'HEAD ASSEMBLY':[-5,6.8,5.5],
+    'NECK / HYDRAULIC COUPLER':[4,7,-4],
+    'TORSO FRAME':[0,-2.8,6],
+    'NEURAL REACTOR':[-4,3,7],
+    'LEFT SHOULDER':[-6,5,-2],
+    'RIGHT SHOULDER':[6,5,-2],
+    'LEFT ARM':[-7,1,2],
+    'RIGHT ARM':[7,1,2],
+    'HIP FRAME':[3,-2,-4],
+    'LEFT LEG':[-4,-4,4],
+    'RIGHT LEG':[4,-4,4],
+    'LEFT FOOT':[-6,-5,-3],
+    'RIGHT FOOT':[6,-5,-3]
+  };
+  assemblyParts.forEach((p,i)=>{
+    const s=specs[p.name]||[0,0,0];
+    p.g.userData.home=p.g.position.clone();
+    p.g.position.set(s[0],s[1],s[2]);
+    p.g.rotation.set((i%2?-.4:.35),i%3*.4,(i%2?.55:-.55));
+    p.g.scale.setScalar(.88);
+  });
+
+  // Sparks.
+  const sparkGroup=new Group();scene.add(sparkGroup);
+  const sparkGeo=new SphereGeometry(.035,6,6);
+  function burst(x,y,z,count=28){
+    for(let i=0;i<count;i++){
+      const m=new Mesh(sparkGeo,lime);
+      m.position.set(x,y,z);
+      m.userData.v=new Vector3((Math.random()-.5)*.12,(Math.random()-.2)*.16,(Math.random()-.5)*.12);
+      m.userData.life=1;
+      sparkGroup.add(m);
+    }
+  }
+
+  function resize(){
+    const r=stage.getBoundingClientRect();
+    const w=Math.max(320,r.width),h=Math.max(560,r.height);
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  }
+  addEventListener('resize',resize);resize();
+
+  // Pointer-driven camera/parallax.
+  let px=0,py=0,targetPX=0,targetPY=0;
+  stage.addEventListener('pointermove',e=>{
+    const r=stage.getBoundingClientRect();
+    targetPX=((e.clientX-r.left)/r.width-.5);
+    targetPY=((e.clientY-r.top)/r.height-.5);
+  },{passive:true});
+  stage.addEventListener('pointerleave',()=>{targetPX=0;targetPY=0},{passive:true});
+
+  let clock=0,assemblyStarted=false,ready=false;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setHud(pct,status,phase){
+    const a=document.getElementById('assemblyProgress'),b=document.getElementById('assemblyStatus'),c=document.getElementById('assemblyPhase');
+    if(a)a.style.width=pct+'%'; if(b)b.innerHTML=status;if(c)c.textContent=phase;
+  }
+
+  function pulse(partName,duration=900){
+    const p=assemblyParts.find(x=>x.name===partName);if(!p)return;
+    p.g.scale.setScalar(1.08);
+    setTimeout(()=>p.g.scale.setScalar(1),duration);
+  }
+
+  function flyPart(name,pct,status,phase,delay){
+    setTimeout(()=>{
+      const p=assemblyParts.find(x=>x.name===name);if(!p)return;
+      p.g.position.copy(p.g.userData.home);
+      p.g.rotation.set(0,0,0);
+      p.g.scale.setScalar(1);
+      pulse(name);
+      setHud(pct,'<strong>'+status+'</strong>',phase);
+      burst(p.g.position.x,p.g.position.y,p.g.position.z,18);
+    },delay);
+  }
+
+  // Replace the old button handler so only the WebGL assembly drives the sequence.
+  const oldBtn=document.getElementById('enterLab');
+  if(oldBtn){
+    const fresh=oldBtn.cloneNode(true);
+    oldBtn.replaceWith(fresh);
+    fresh.addEventListener('click',()=>{
+      if(assemblyStarted)return;
+      assemblyStarted=true;
+      fresh.style.opacity='0';
+      canvas.classList.add('live');
+      if(window.startAudio) try{window.startAudio()}catch(e){}
+      const sequence=[
+        ['TORSO FRAME',8,'TORSO FRAME // INBOUND','STRUCTURAL CORE 8%',300],
+        ['NECK / HYDRAULIC COUPLER',16,'NECK COUPLER // ALIGN','FRAME ASSEMBLY 16%',1250],
+        ['LEFT SHOULDER',25,'LEFT SHOULDER // MAG-LOCK','FRAME ASSEMBLY 25%',2200],
+        ['RIGHT SHOULDER',34,'RIGHT SHOULDER // MAG-LOCK','FRAME ASSEMBLY 34%',2850],
+        ['LEFT ARM',43,'LEFT ARM // HYDRAULIC LINK','FRAME ASSEMBLY 43%',3550],
+        ['RIGHT ARM',52,'RIGHT ARM // HYDRAULIC LINK','FRAME ASSEMBLY 52%',4050],
+        ['NEURAL REACTOR',64,'NEURAL CORE // INSERT','REACTOR CHAMBER 64%',4800],
+        ['HIP FRAME',72,'HIP FRAME // COUPLE','STRUCTURAL LOCK 72%',5850],
+        ['LEFT LEG',82,'LEFT LEG // DEPLOY','LOWER FRAME 82%',6650],
+        ['RIGHT LEG',90,'RIGHT LEG // DEPLOY','LOWER FRAME 90%',7250],
+        ['LEFT FOOT',95,'LEFT GROUND LOCK // CLAMP','GROUND LOCK 95%',8000],
+        ['RIGHT FOOT',98,'RIGHT GROUND LOCK // CLAMP','GROUND LOCK 98%',8500],
+        ['HEAD ASSEMBLY',100,'HEAD UNIT // FINAL LOCK','FRAME ASSEMBLY 100%',9250]
+      ];
+      sequence.forEach(x=>flyPart(...x));
+
+      setTimeout(()=>{
+        setHud(100,'<strong>FRAME ASSEMBLY 100%</strong>','STRUCTURAL LOCK COMPLETE');
+        burst(0,4.3,1.1,55);
+        if(window.sfx)try{window.sfx('lock')}catch(e){}
+      },10100);
+
+      setTimeout(()=>{
+        setHud(100,'<strong>REACTOR IGNITION</strong>','NEURAL CORE CHARGING');
+        burst(0,4.35,1.15,80);
+        if(window.sfx)try{window.sfx('core')}catch(e){}
+      },11000);
+
+      setTimeout(()=>{
+        ready=true;
+        setHud(100,'<strong>NEURAL CORE ONLINE</strong>','SYSTEM READY');
+        if(window.sfx)try{window.sfx('eyes')}catch(e){}
+        document.querySelectorAll('.setup-panel').forEach(x=>x.classList.add('visible'));
+      },12300);
+    });
+  }
+
+  // Camera + animation loop.
+  function animate(){
+    requestAnimationFrame(animate);
+    const dt=.016;clock+=dt;
+    px=MathUtils.lerp(px,targetPX,.045);py=MathUtils.lerp(py,targetPY,.045);
+
+    camera.position.x=MathUtils.lerp(camera.position.x,px*1.15,.025);
+    camera.position.y=MathUtils.lerp(camera.position.y,2.1-py*.55,.025);
+    camera.position.z=MathUtils.lerp(camera.position.z,13.8,.025);
+    camera.lookAt(0,2.75,0);
+
+    if(assemblyStarted && !ready){
+      robot.rotation.y=Math.sin(clock*.34)*.035+px*.08;
+      robot.rotation.x=py*.025;
+    }else if(ready){
+      robot.rotation.y=Math.sin(clock*.22)*.055+px*.1;
+      robot.rotation.x=py*.035;
+      const s=1+Math.sin(clock*1.5)*.008;
+      robot.scale.set(s,s,s);
+    }
+
+    reactorRing.rotation.z+=.012;
+    cyan.emissiveIntensity=3.4+Math.sin(clock*3)*.8;
+    lime.emissiveIntensity=4.4+Math.sin(clock*4.5)*1.1;
+
+    for(let i=sparkGroup.children.length-1;i>=0;i--){
+      const s=sparkGroup.children[i];
+      s.position.add(s.userData.v);
+      s.userData.v.y-=.0038;
+      s.userData.life-=.025;
+      s.scale.setScalar(Math.max(.01,s.userData.life));
+      if(s.userData.life<=0)sparkGroup.remove(s);
+    }
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+</script>
+
 </body>
 </html>
